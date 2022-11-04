@@ -39,7 +39,6 @@ window.Echo = new Echo({
     wsHost: window.location.hostname,
     wsPort: process.env.MIX_PUSHER_PORT,
     wssPort: process.env.MIX_PUSHER_PORT,
-    encrypted: true,
     forceTLS: true,
     enabledTransports: ['ws', 'wss'],
 });
