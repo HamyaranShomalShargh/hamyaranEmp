@@ -122,7 +122,7 @@ Route::group(['prefix'=>'Dashboard', 'middleware'=>['auth']],function() {
             Artisan::call('storage:link');
         })->name("link_storage");
         Route::get('/serve-websocket', function(){
-            Artisan::call('websockets:serve --port=8443');
+            Artisan::call('websockets:serve --port=6002');
         })->name("serve_websocket");
         Route::get('/clear', function () {
             Artisan::call('optimize:clear');
