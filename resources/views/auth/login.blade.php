@@ -7,16 +7,22 @@
     <title>ورود به سیستم</title>
     <script src="{{ asset('js/app.js?v='.time()) }}" defer></script>
     <link href="{{ asset('css/app.css?v='.time()) }}" rel="stylesheet">
+    <script>
+        window.Laravel = {!! json_encode([
+        'user' => auth()->check() ? auth()->user()->id : null,
+    ]) !!};
+    </script>
 </head>
 <body style="background: #0d1117">
 <div id="app">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-12 text-center">
-                <img class="pt-5 pb-5" src="{{asset("/images/bw-logo.png?v=jj")}}" alt="logo"/>
+            <div class="col-12 text-center pt-5 pb-5">
+                <img src="{{asset("/images/bw-logo.png?v=jj")}}" alt="logo"/>
+                <h5 class="mid-white-color iransans text-center mt-4">مدیریت کارکرد ماهانه</h5>
             </div>
             <div class="col-12 text-center">
-                <h5 class="mid-white-color pb-2 iranyekan">ورود به سیستم</h5>
+                <h5 class="text-muted pb-2 iranyekan">ورود به سیستم</h5>
             </div>
             <div class="login-box pt-3 pb-4 pr-3 pl-3 rtl">
                 <form id="login_form" method="POST" action="{{ route('login') }}" v-on:submit="login">
@@ -25,60 +31,55 @@
                         <i class="fa fa-user"></i>
                         نام کاربری
                     </label>
-                    <input type="text" class="form-control login-input-text @error('username') is-invalid @enderror" name="username">
+                    <input type="text" autofocus tabindex="1" class="form-control login-input-text @error('username') is-invalid @enderror" name="username">
                     @error('username')
-                    <span class="invalid-feedback iranyekan" role="alert">
+                    <span class="invalid-feedback iranyekan text-center" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
                     @enderror
                     <label class="mid-white-color iranyekan form-lbl mt-3">
                         <i class="fa fa-key"></i>
-                        <span>کلمه عبور</span>
-                        <a href="#">(فراموشی کلمه عبور)</a>
+                        کلمه عبور
+                        <a tabindex="-1" href="{{ route("password.reset") }}">(فراموشی کلمه عبور)</a>
                     </label>
-                    <input type="password" class="form-control login-input-text @error('password') is-invalid @enderror" name="password">
+                    <input type="password" tabindex="2" class="form-control login-input-text @error('password') is-invalid @enderror" name="password">
                     @error('password')
-                    <span class="invalid-feedback iranyekan" role="alert">
+                    <span class="invalid-feedback iranyekan text-center" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
                     @enderror
                     <label class="mid-white-color iranyekan form-lbl mt-3">
                         <i class="fa fa-shield-blank"></i>
-                        <span>کد امنیتی</span>
-                        <a href="#" v-on:click="recaptcha"><i class="fa fa-refresh"></i></a>
+                        کد امنیتی
+                        <a tabindex="-1" href="#" v-on:click="recaptcha"><i class="fa fa-refresh fa-1-2x"></i></a>
                     </label>
                     <span class="captcha-image d-block mb-2 text-center">{!! Captcha::img() !!}</span>
-                    <input type="text" class="form-control login-input-text iranyekan font-size-sm @error('captcha') is-invalid @enderror" placeholder="کد امنیتی" name="captcha">
-                    @error('captcha')
-                    <span class="invalid-feedback iranyekan" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                    <input class="@error('login_failed') is-invalid @enderror" type="hidden">
-                    @error('login_failed')
-                    <span class="invalid-feedback iranyekan text-center" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                    <button type="submit" class="btn btn-outline-success form-control mt-4 iranyekan login-button">
-                        <i id="login-button-icon" class="fa fa-sign-in"></i>
-                        <span id="login-button-text">ورود به سیستم</span>
+                    <input type="text" tabindex="3" class="form-control login-input-text captcha-input iranyekan font-size-xl number_masked @error('captcha') is-invalid @enderror" data-mask="000000" name="captcha">
+                    <div class="login-errors">
+                        @error('captcha')
+                        <span class="invalid-feedback d-block iranyekan font-size-lg text-center p-0 m-0" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                        @error('login_failed')
+                        <span class="invalid-feedback iranyekan d-block font-size-lg text-center p-0 m-0" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+                    <button tabindex="4" type="submit" class="btn btn-outline-success form-control iranyekan login-button">
+                        <i id="login-button-icon" class="fa fa-sign-in fa-1-2x mr-2"></i>
+                        <span id="login-button-text" class="font-size-lg">ورود به سیستم</span>
                     </button>
                 </form>
             </div>
         </div>
-        <div class="row justify-content-center mt-3 iranyekan">
-            <div class="login-box no-background pt-3 pb-3 pr-3 pl-3 rtl text-center d-flex justify-content-center align-items-center">
-                <span class="mid-white-color mr-2">ثبت نام نکرده اید؟ </span>
-                <a href="{{ route("step_one") }}">ثبت نام در سامانه</a>
-            </div>
-        </div>
-        <div class="row justify-content-center mt-5 pt-3 iranyekan text-muted font-size-sm d-flex flex-column justify-content-center align-items-center">
+        <div class="row justify-content-center mt-2 iranyekan text-muted font-size-sm d-flex flex-column justify-content-center align-items-center">
         <span>
             <i class="fa fa-copyright"></i>
             کلیه حقوق متعلق به شرکت همیاران شمال شرق می باشد.
         </span>
-            <span>نسخه 3.0.0</span>
+            <span>نسخه 2.0.1</span>
         </div>
     </div>
 </div>

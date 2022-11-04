@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'characters' => ['2', '3', '4', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'm', 'n', 'p', 'q', 'r', 't', 'u', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'M', 'N', 'P', 'Q', 'R', 'T', 'U', 'X', 'Y', 'Z'],
+    'characters' => ['1','2', '3', '4', '6', '7', '8', '9'],
     'default' => [
-        'length' => 9,
-        'width' => 120,
-        'height' => 36,
-        'quality' => 90,
+        'length' => 6,
+        'width' => 265,
+        'height' => 40,
+        'quality' => 100,
         'math' => false,
         'expire' => 60,
         'encrypt' => false,

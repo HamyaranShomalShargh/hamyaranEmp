@@ -55,6 +55,56 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
         ],
+        'admin' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/admin'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
+        'menu_header_icons' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/menu_header_icons'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+        'menu_item_icons' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/menu_item_icons'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+        'staff_signs' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/staff_signs'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'private',
+            'throw' => false,
+        ],
+        'contract_docs' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/contract_docs'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'private',
+            'throw' => false,
+        ],
+        'contract_subset_docs' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/contract_subset_docs'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'private',
+            'throw' => false,
+        ],
+        'advantage_files' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/advantage_files'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'private',
+            'throw' => false,
+        ],
 
     ],
 
@@ -70,7 +120,7 @@ return [
     */
 
     'links' => [
-        public_path('storage') => storage_path('app/public'),
+        app()->basePath('public_html/storage') => storage_path('app/public'),
     ],
 
 ];

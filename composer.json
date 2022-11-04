@@ -6,12 +6,20 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "ext-zip": "*",
+        "beyondcode/laravel-websockets": "^1.13",
+        "econea/nusoap": "^0.9.12",
         "guzzlehttp/guzzle": "^7.2",
+        "hekmatinasser/verta": "^8.1",
+        "laravel-notification-channels/webpush": "^7.0",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.0",
-        "mews/captcha": "^3.2"
+        "maatwebsite/excel": "^3.1",
+        "mews/captcha": "^3.2",
+        "pusher/pusher-php-server": "7.0",
+      "ext-curl": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
