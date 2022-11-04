@@ -41,4 +41,5 @@ window.Echo = new Echo({
     wssPort: process.env.MIX_PUSHER_PORT,
     forceTLS: true,
     enabledTransports: ['ws', 'wss'],
+    disableStats: true,
 });

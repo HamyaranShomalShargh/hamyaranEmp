@@ -11287,7 +11287,8 @@ window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_2__["default"]({
   wsPort: "6002",
   wssPort: "6002",
   forceTLS: true,
-  enabledTransports: ['ws', 'wss']
+  enabledTransports: ['ws', 'wss'],
+  disableStats: true
 });
 
 /***/ }),
