@@ -8,7 +8,7 @@ return [
      * Set a custom dashboard configuration
      */
     'dashboard' => [
-        'port' => env('PUSHER_PORT', 8443),
+        'port' => env('PUSHER_PORT', 6001),
     ],
 
     /*
