@@ -15,8 +15,8 @@
     </tr>
     </thead>
     <tbody>
-    @if($contract->performance_automation)
-        @forelse($contract->performance_automation->performances as $item)
+    @if(isset($automation) && $automation != null)
+        @forelse($automation->performances as $item)
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $item->employee->first_name." ".$item->employee->last_name }}</td>
@@ -25,7 +25,7 @@
                     <td>{{ $item->job_group }}</td>
                     <td>{{ $item->daily_wage }}</td>
                 @endif
-                @forelse($contract->performance_attribute->items as $attribute)
+                @forelse($automation->attributes->items as $attribute)
                     <td>{{ $item->employee["performance_data"][$loop->index] }}</td>
                 @empty
                 @endforelse

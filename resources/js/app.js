@@ -87,7 +87,7 @@ const app = new Vue({
                     }
             });
         if ($("#table_responsive").length)
-            $("#table_responsive").css("max-height",`calc(100vh - 50px - ${document.getElementById("table_responsive").offsetTop}px)`);
+            $("#table_responsive").css("max-height",`calc(100vh - 75px - ${document.getElementById("table_responsive").offsetTop}px)`);
         if (typeof window.Laravel.user !== "undefined" && window.Laravel.user) {
             Echo.private(`notifications.${window.Laravel.user}`)
                 .listen('NotificationEvent', (notification) => {
@@ -288,6 +288,8 @@ const app = new Vue({
             setTimeout(function(){
                 $('.information-box').fadeOut(1000,function (){
                     $(this).remove();
+                    if ($("#table_responsive").length)
+                        $("#table_responsive").css("max-height",`calc(100vh - 75px - ${document.getElementById("table_responsive").offsetTop}px)`);
                 })
             }, 4000);
         }
@@ -305,8 +307,8 @@ const app = new Vue({
     computed: {
         total_extra_work() {
             let sum = 0;
-            if (this.table_data_records?.performance_automation?.performances) {
-                this.table_data_records.performance_automation.performances.forEach((item) => {
+            if (this.table_data_records?.performances) {
+                this.table_data_records.performances.forEach((item) => {
                     if (typeof item.employee["performance_data"] !== "undefined")
                         sum += Number(item.employee["performance_data"][1]);
                 });
@@ -393,7 +395,10 @@ const app = new Vue({
             if (typeof e.target.dataset.json !== "undefined"){
                 switch (e.target.dataset.json){
                     case "employees_data":{
-                        json_data = JSON.stringify(self.table_data_records);
+                        if (self.table_data_records?.employees)
+                            json_data = JSON.stringify(self.table_data_records);
+                        else if (self.table_data_records?.performances)
+                            json_data = JSON.stringify(self.table_data_records);
                         break;
                     }
                     case "attributes_list":{
@@ -596,11 +601,11 @@ const app = new Vue({
             }
         },
         get_employee_performance_value(id,i){
-            if (this.table_data_records?.performance_automation?.performances){
-                let index = this.table_data_records.performance_automation.performances.map((item) => { return item.employee.id; }).indexOf(id);
-                if(typeof this.table_data_records.performance_automation.performances[index].employee["performance_data"] !== "undefined"){
-                    if (typeof this.table_data_records.performance_automation.performances[index].employee["performance_data"][i] !== "undefined")
-                        return this.table_data_records.performance_automation.performances[index].employee["performance_data"][i] !== null ? this.table_data_records.performance_automation.performances[index].employee["performance_data"][i] : 0;
+            if (this.table_data_records?.performances){
+                let index = this.table_data_records.performances.map((item) => { return item.employee.id; }).indexOf(id);
+                if(typeof this.table_data_records.performances[index].employee["performance_data"] !== "undefined"){
+                    if (typeof this.table_data_records.performances[index].employee["performance_data"][i] !== "undefined")
+                        return this.table_data_records.performances[index].employee["performance_data"][i] !== null ? this.table_data_records.performances[index].employee["performance_data"][i] : 0;
                 }
             }
             else if (this.table_data_records?.employees){
@@ -612,12 +617,12 @@ const app = new Vue({
         },
         set_employee_performance_value(e,id,i){
             let tmp = JSON.parse(JSON.stringify(this.table_data_records));
-            if (this.table_data_records?.performance_automation?.performances){
+            if (this.table_data_records?.performances){
                 e.target.value === "" || e.target.value === null ? e.target.value = 0 : "";
-                let index = this.table_data_records.performance_automation.performances.map((item) => { return item.employee.id; }).indexOf(id);
-                if(typeof this.table_data_records.performance_automation.performances[index].employee["performance_data"] !== "undefined"){
-                    if (typeof this.table_data_records.performance_automation.performances[index].employee["performance_data"][i] !== "undefined") {
-                        tmp.performance_automation.performances[index].employee["performance_data"][i] = e.target.type === 'number' ? Number(e.target.value) : e.target.value;
+                let index = this.table_data_records.performances.map((item) => { return item.employee.id; }).indexOf(id);
+                if(typeof this.table_data_records.performances[index].employee["performance_data"] !== "undefined"){
+                    if (typeof this.table_data_records.performances[index].employee["performance_data"][i] !== "undefined") {
+                        tmp.performances[index].employee["performance_data"][i] = e.target.type === 'number' ? Number(e.target.value) : e.target.value;
                     }
                 }
             }
@@ -659,7 +664,7 @@ const app = new Vue({
                     break;
                 }
                 case "edit":{
-                    this.table_data_records.performance_automation.performances.forEach((item,index) => {
+                    this.table_data_records.performances.forEach((item,index) => {
                         if (typeof item.employee["performance_data"] !== "undefined"){
                             if(item.employee["performance_data"][1] > self.table_data_records.overtime_registration_limit)
                                 extra_work_error.push(index);
@@ -673,7 +678,7 @@ const app = new Vue({
                 }
             }
             if (extra_work_error.length > 0 || work_day_error.length > 0){
-                let tbody = $("#search_table").find("tbody")[0];
+                let tbody = $("#main-table").find("tbody")[0];
                 if (work_day_error.length > 0) {
                     work_day_error.forEach((item) => {
                         tbody.rows[item].cells[2].children[0].classList.add("is-invalid");
@@ -708,10 +713,10 @@ const app = new Vue({
                 }
             }
             else {
-                let index = this.table_data_records.performance_automation.performances.map((item) => {return item.employee.id;}).indexOf(id);
-                if (typeof this.table_data_records.performance_automation.performances[index].employee["invoice_data"] !== "undefined") {
-                    if (typeof this.table_data_records.performance_automation.performances[index].employee["invoice_data"][i] !== "undefined")
-                        return this.table_data_records.performance_automation.performances[index].employee["invoice_data"][i] !== null ? this.table_data_records.performance_automation.performances[index].employee["invoice_data"][i] : 0;
+                let index = this.table_data_records.performances.map((item) => {return item.employee.id;}).indexOf(id);
+                if (typeof this.table_data_records.performances[index].employee["invoice_data"] !== "undefined") {
+                    if (typeof this.table_data_records.performances[index].employee["invoice_data"][i] !== "undefined")
+                        return this.table_data_records.performances[index].employee["invoice_data"][i] !== null ? this.table_data_records.performances[index].employee["invoice_data"][i] : 0;
                 }
             }
             return 0;
@@ -728,10 +733,10 @@ const app = new Vue({
             }
             else {
                 e.target.value === "" || e.target.value === null ? e.target.value = 0 : "";
-                let index = this.table_data_records.performance_automation.performances.map((item) => { return item.employee.id; }).indexOf(id);
-                if(typeof this.table_data_records.performance_automation.performances[index].employee["invoice_data"] !== "undefined"){
-                    if (typeof this.table_data_records.performance_automation.performances[index].employee["invoice_data"][i] !== "undefined") {
-                        this.table_data_records.performance_automation.performances[index].employee["invoice_data"][i] = e.target.type === 'number' ? Number(e.target.value) : e.target.value;
+                let index = this.table_data_records.performances.map((item) => { return item.employee.id; }).indexOf(id);
+                if(typeof this.table_data_records.performances[index].employee["invoice_data"] !== "undefined"){
+                    if (typeof this.table_data_records.performances[index].employee["invoice_data"][i] !== "undefined") {
+                        this.table_data_records.performances[index].employee["invoice_data"][i] = e.target.type === 'number' ? Number(e.target.value) : e.target.value;
                     }
                 }
             }

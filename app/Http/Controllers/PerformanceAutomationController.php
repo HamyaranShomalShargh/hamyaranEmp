@@ -55,28 +55,26 @@ class PerformanceAutomationController extends Controller
                 $automation = PerformanceAutomation::query()->whereHas("signs", function ($query) {
                     $query->where("user_id", "=", Auth::id());
                 })->with([
-                    "contract.employees",
-                    "contract.performance_automation.performances.employee",
-                    "contract.performance_automation.attributes.items",
-                    "performances",
+                    "contract",
+                    "performances.employee",
                     "authorized_date",
                     "comments.user",
+                    "attributes.items",
                     "signs.user"])->findOrFail($id);
             else
                 $automation = PerformanceAutomation::query()->whereHas("current_role", function ($query) {
                     $query->where("id", "=", Auth::user()->role->id);
                 })->with([
-                    "contract.employees",
-                    "contract.performance_automation.performances.employee",
-                    "contract.performance_automation.attributes.items",
-                    "performances",
+                    "contract",
+                    "performances.employee",
                     "authorized_date",
                     "comments.user",
+                    "attributes.items",
                     "signs.user"])->findOrFail($id);
             $automation->update(["is_read" => 1]);
             $final_role = $automation->final_automation_role();
             $employee_performances = $automation->performances->toArray();
-            $automation->contract->performance_automation->performances->map(function ($item) use ($employee_performances) {
+            $automation->performances->map(function ($item) use ($employee_performances) {
                 $search_data = array_column($employee_performances, "employee_id");
                 $index = array_search($item->employee->id, $search_data);
                 if (gettype($index) !== 'boolean') {
@@ -103,9 +101,8 @@ class PerformanceAutomationController extends Controller
             $request->validate(["employees_data" => "required"], ["employees_data.required" => "اطلاعات کارکرد پرسنل ارسال نشده است"]);
             $employees_data = json_decode($request->input("employees_data"),true);
             if ($employees_data) {
-                DB::beginTransaction();
                 $automation = PerformanceAutomation::query()->findOrFail($id);
-                foreach ($employees_data["performance_automation"]["performances"] as $item) {
+                foreach ($employees_data["performances"] as $item) {
                     Performance::query()->updateOrCreate(["performance_automation_id" => $automation->id, "employee_id" => $item["employee"]["id"]], [
                         "performance_automation_id" => $automation->id,
                         "employee_id" => $item["employee"]["id"],

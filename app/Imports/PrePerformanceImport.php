@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\ContractSubset;
+use App\Models\PerformanceAutomation;
 use App\Rules\NationalCodeChecker;
 use Illuminate\Support\Facades\Hash;
 use JetBrains\PhpStorm\ArrayShape;
@@ -76,8 +77,10 @@ class PrePerformanceImport implements ToArray,WithValidation,SkipsOnFailure,With
     {
         $array = array_values($array);
         if ($this->authorized_date_id){
-            $contract_subset = ContractSubset::query()->with(["contract","performance_automation.performances.employee","performance_automation.attributes.items"])->findOrFail($this->contract_subset_id);
-            $contract_subset->performance_automation->performances->map(function ($item) use ($array) {
+            $automation = PerformanceAutomation::query()->with(["contract","performances.employee","attributes.items"])->whereHas("authorized_date",function ($query){
+                $query->where("authorized_date_id", "=", $this->authorized_date_id);
+            })->where("contract_subset_id","=",$this->contract_subset_id)->first();
+            $automation->performances->map(function ($item) use ($array) {
                 $search_data = array_column($array, 2);
                 $index = array_search($item->employee->national_code, $search_data);
                 if (gettype($index) !== 'boolean') {
@@ -88,6 +91,7 @@ class PrePerformanceImport implements ToArray,WithValidation,SkipsOnFailure,With
                     $item->employee["performance_data"] = $array[$index];
                 }
             });
+            $this->result = $automation->toArray();
         }
         else {
             $contract_subset = ContractSubset::query()->with(["employees", "contract","performance_attribute.items"])->findOrFail($this->contract_subset_id);
@@ -102,8 +106,8 @@ class PrePerformanceImport implements ToArray,WithValidation,SkipsOnFailure,With
                     $employee["performance_data"] = $array[$index];
                 }
             });
+            $this->result = $contract_subset->toArray();
         }
-        $this->result = $contract_subset->toArray();
     }
     public function getResult(): array
     {

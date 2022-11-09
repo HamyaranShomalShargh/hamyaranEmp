@@ -9,5 +9,5 @@ class AutomationAuthorizedDate extends Model
 {
     use HasFactory;
     protected $table = "automation_authorized_date";
-    protected $fillable = ["automation_year","automation_month","month_name"];
+    protected $fillable = ["automation_year","automation_month","month_name","created_at","updated_at"];
 }

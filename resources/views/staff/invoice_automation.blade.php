@@ -160,7 +160,7 @@
                                     </td>
                                     <td><span class="iranyekan">{{ count($invoice_outbox->invoices) }}</span></td>
                                     <td><span class="iranyekan">{{ $invoice_outbox->user->name }}</span></td>
-                                    <td><span class="iranyekan">{{ verta($invoice_outbox->cretaed_at)->format("H:i:s Y/m/d") }}</span></td>
+                                    <td><span class="iranyekan">{{ verta($invoice_outbox->created_at)->format("H:i:s Y/m/d") }}</span></td>
                                     <td><span class="iranyekan">{{ verta($invoice_outbox->updated_at)->format("H:i:s Y/m/d") }}</span></td>
                                     <td>
                                         <div class="dropdown table-functions">

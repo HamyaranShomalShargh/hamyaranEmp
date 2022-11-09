@@ -164,7 +164,7 @@
                                         @endif
                                     </td>
                                     <td><span class="iranyekan">{{ $advantage_outbox->user->name }}</span></td>
-                                    <td><span class="iranyekan">{{ verta($advantage_outbox->cretaed_at)->format("H:i:s Y/m/d") }}</span></td>
+                                    <td><span class="iranyekan">{{ verta($advantage_outbox->created_at)->format("H:i:s Y/m/d") }}</span></td>
                                     <td><span class="iranyekan">{{ verta($advantage_outbox->updated_at)->format("H:i:s Y/m/d") }}</span></td>
                                     <td>
                                         <div class="dropdown table-functions">

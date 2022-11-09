@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\NotificationEvent;
 use App\Http\Controllers\AccountInformationController;
 use App\Http\Controllers\AccountVerificationController;
 use App\Http\Controllers\Admin\AdminContractHeaderController;

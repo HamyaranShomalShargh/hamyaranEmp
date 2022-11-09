@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\ContractSubset;
+use App\Models\PerformanceAutomation;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Hash;
 use JetBrains\PhpStorm\ArrayShape;
@@ -12,26 +13,31 @@ use Maatwebsite\Excel\Concerns\WithProperties;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
+use mysql_xdevapi\Collection;
 use PhpOffice\PhpSpreadsheet\Cell\StringValueBinder;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class NewPerformanceExport extends StringValueBinder implements FromView,WithStyles,WithEvents,WithTitle,WithProperties
 {
     private int $contract_subset_id;
+    private mixed $authorized_date_id;
     private array $columns;
     private array|null|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model $contract;
     private int $highest_column;
     private string $extra;
+    private mixed $automation = null;
     public function __construct($contract_subset_id,$authorized_date_id = null,$extra = false)
     {
+        $this->authorized_date_id = $authorized_date_id;
         $this->contract_subset_id = $contract_subset_id;
         $this->extra = $extra;
-        if ($authorized_date_id) {
-            $this->contract = ContractSubset::query()->with(["contract", "employees", "performance_automation.performances.employee"])->whereHas("performance_automation", function ($query) use ($authorized_date_id) {
-                $query->where("authorized_date_id", "=", $authorized_date_id);
-            })->findOrFail($this->contract_subset_id);
-            $employee_performances = $this->contract->performance_automation->performances->toArray();
-            $this->contract->performance_automation->performances->map(function ($item) use ($employee_performances) {
+        if ($this->authorized_date_id) {
+            $this->contract = ContractSubset::query()->findOrFail($this->contract_subset_id);
+            $this->automation = PerformanceAutomation::query()->with(["performances.employee","attributes.items"])->whereHas("authorized_date",function ($query){
+                $query->where("authorized_date_id", "=", $this->authorized_date_id);
+            })->where("contract_subset_id","=",$this->contract_subset_id)->first();
+            $employee_performances = $this->automation->performances->toArray();
+            $this->automation->performances->map(function ($item) use ($employee_performances) {
                 $search_data = array_column($employee_performances,"employee_id");
                 $index = array_search($item->employee->id,$search_data);
                 if (gettype($index) !== 'boolean') {
@@ -76,7 +82,7 @@ class NewPerformanceExport extends StringValueBinder implements FromView,WithSty
     }
     public function view(): View
     {
-        return view('excel.new_performance',["contract" => $this->contract, "extra" => $this->extra]);
+        return view('excel.new_performance',["contract" => $this->contract,"automation" => $this->automation, "extra" => $this->extra]);
     }
 
     public function title(): string

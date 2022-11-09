@@ -319,6 +319,7 @@ footer{
 }
 .content-window{
     box-shadow: 0 5px 5px -1px #c2c2c2;
+    padding-bottom: 25px;
 }
 .bootbox-alert{
     font-family: iranyekan,'sans-serif' !important;

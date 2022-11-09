@@ -71,7 +71,7 @@
                                 @endif
                             </td>
                             <td><span class="iranyekan">{{ $contract_header->user->name }}</span></td>
-                            <td><span class="iranyekan">{{ verta($contract_header->cretaed_at)->format("H:i:s Y/m/d") }}</span></td>
+                            <td><span class="iranyekan">{{ verta($contract_header->created_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td><span class="iranyekan">{{ verta($contract_header->updated_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td>
                                 <div class="dropdown table-functions iranyekan">

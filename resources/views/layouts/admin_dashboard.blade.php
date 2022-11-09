@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <link rel="icon" type="image/x-icon" href="{{ asset("/images/logo.ico?v=2.01") }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>داشبورد</title>
@@ -57,19 +58,19 @@
                     <ul class="ribbon-container">
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("MenuHeaders.index")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-around">
-                                <img class="ribbon-item-icon" src="{{asset("/images/menu/menu.png?v=oo")}}" alt="menu">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/menu.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">سرفصل منو</span>
                             </a>
                         </li>
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("MenuItems.index")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-around">
-                                <img class="ribbon-item-icon" src="{{asset("/images/menu/menu-item.png?v=oko")}}" alt="menu">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/list.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">عناوین منو</span>
                             </a>
                         </li>
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("MenuActions.index")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-around">
-                                <img class="ribbon-item-icon" src="{{asset("/images/menu/menu-action.png?v=olpo")}}" alt="menu">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/action.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">عملیات منو</span>
                             </a>
                         </li>
@@ -79,13 +80,13 @@
                     <ul class="ribbon-container">
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("AdminContractHeader.index")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-around">
-                                <img class="ribbon-item-icon" src="{{asset("/images/menu/menu.png?v=oo")}}" alt="menu">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/conhead.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">قرارداد</span>
                             </a>
                         </li>
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("AdminContractSubset.index")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-around">
-                                <img class="ribbon-item-icon" src="{{asset("/images/menu/menu-item.png?v=oko")}}" alt="menu">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/subcon.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">زیرمجموعه قرارداد</span>
                             </a>
                         </li>
@@ -95,13 +96,13 @@
                     <ul class="ribbon-container">
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("Users.index")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-around">
-                                <img class="ribbon-item-icon" src="{{asset("/images/menu/users.png?n=op")}}" alt="menu">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/emp.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">کاربران</span>
                             </a>
                         </li>
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("Roles.index")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-around">
-                                <img class="ribbon-item-icon" src="{{asset("/images/menu/role.png?n=op")}}" alt="menu">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/role.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">عنوان شغلی</span>
                             </a>
                         </li>
@@ -111,7 +112,7 @@
                     <ul class="ribbon-container">
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("AutomationFlow.index")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-around">
-                                <img class="ribbon-item-icon" src="{{asset("/images/menu/menu.png?v=oo")}}" alt="menu">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/data-flow.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">جریان گردش اتوماسیون</span>
                             </a>
                         </li>
@@ -121,31 +122,31 @@
                     <ul class="ribbon-container">
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("DefaultTableAttributes.index")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-around">
-                                <img class="ribbon-item-icon" src="{{asset("/images/menu/company.png?n=op")}}" alt="menu">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/chart1.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">عناوین پیش فرض</span>
                             </a>
                         </li>
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("TableAttributes.index")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-around">
-                                <img class="ribbon-item-icon" src="{{asset("/images/menu/company.png?n=op")}}" alt="menu">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/chart2.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">عناوین ورودی</span>
                             </a>
                         </li>
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("InvoiceCoverTitles.index")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-around">
-                                <img class="ribbon-item-icon" src="{{asset("/images/menu/company.png?n=op")}}" alt="menu">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/chart2.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">عناوین روکش وضعیت</span>
                             </a>
                         </li>
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("Advantages.index")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-around">
-                                <img class="ribbon-item-icon" src="{{asset("/images/menu/company.png?n=op")}}" alt="menu">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/chart2.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">عناوین تغییرات مزایا</span>
                             </a>
                         </li>
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("CompanyInformation.index")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-around">
-                                <img class="ribbon-item-icon" src="{{asset("/images/menu/company.png?n=op")}}" alt="menu">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/company.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">اطلاعات سازمان</span>
                             </a>
                         </li>
@@ -155,19 +156,19 @@
                     <ul class="ribbon-container">
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("account.information")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-between">
-                                <img src="{{asset("/storage/menu_item_icons/")}}" alt="menu">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/user_inf.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">حساب کاربری</span>
                             </a>
                         </li>
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("account.verification")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-between">
-                                <img src="{{asset("/storage/menu_item_icons/")}}" alt="menu">
+                                <img src="{{asset("/images/static_menu_icons/verification.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">تاییدیه اطلاعات</span>
                             </a>
                         </li>
                         <li class="position-relative ribbon-li">
                             <a role="button" href="{{route("user.password.reset")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-between">
-                                <img src="{{asset("/storage/menu_item_icons/")}}" alt="menu">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/password.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">تغییر گذرواژه</span>
                             </a>
                         </li>
@@ -177,7 +178,7 @@
                                 <div class="form-row p-0 m-0">
                                     <div class="form-group col-12 p-0 m-0">
                                         <button type="submit" form="logout_form" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-between">
-                                            <img src="{{asset("/storage/menu_item_icons/")}}" alt="menu">
+                                            <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/exit.png")}}" alt="menu">
                                             <span class="iranyekan ribbon-item-text">خروج</span>
                                         </button>
                                     </div>
@@ -190,6 +191,7 @@
         @endif
     </header>
     <div class="main rtl container-fluid pr-3 pl-3" v-on:click="hide_ribbon">
+        <img src="{{ asset("/images/idle-bg.png?v=888") }}" class=" idle-bg position-absolute m-auto">
         @if($errors->any())
             <div class="w-100 mt-2 error-box">
                 <div class="alert alert-danger iransans mb-0 h-100 border border-danger pt-3 pb-3" role="alert">
@@ -206,7 +208,7 @@
             </div>
         @endif
         @if(session()->has("result"))
-            <div class="information-box w-100 mt-2">
+            <div class="information-box position-absolute mt-2">
                 <div class="alert alert-{{ session("result") }} iransans mb-0 h-100 border border-{{ session("result") }} pt-3 pb-3" role="alert">
                     <h6 class="pt-2 font-weight-bold">
                         @switch(session("result"))

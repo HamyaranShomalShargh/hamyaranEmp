@@ -51,7 +51,7 @@
                             <td><span class="iranyekan">{{ $menu_item->name }}</span></td>
                             <td><span class="iranyekan">{{ $menu_item->menu_header->name }}</span></td>
                             <td><span class="iranyekan">{{ $menu_item->user->name }}</span></td>
-                            <td><span class="iranyekan">{{ verta($menu_item->cretaed_at)->format("H:i:s Y/m/d") }}</span></td>
+                            <td><span class="iranyekan">{{ verta($menu_item->created_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td><span class="iranyekan">{{ verta($menu_item->updated_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td>
                                 <div class="dropdown table-functions iranyekan">

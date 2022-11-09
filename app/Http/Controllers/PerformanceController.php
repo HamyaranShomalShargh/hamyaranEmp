@@ -38,11 +38,9 @@ class PerformanceController extends Controller
             $contract_subset = ContractSubset::query()->with(["contract","employees","performance_automation.performances.employee","performance_attribute.items"])->findOrFail($request->input("contract_id"));
             if (count($authorized_date = $contract_subset->entry_date_check()) == 0)
                 return redirect()->back()->withErrors(["result" => "مهلت ایجاد و ارسال اطلاعات کارکرد ".verta()->format("F")." ماه ".$contract_subset->workplace." به اتمام رسیده است"]);
-            if ($contract_subset->performance_automation()->exists()) {
-                if ($contract_subset->performance_automation->is_committed == 1)
-                    return redirect()->back()->withErrors(["result" => "کاربر گرامی، کارکرد " . verta()->format("F") . " ماه " . $contract_subset->workplace . " تایید و ارسال نهایی شده است. جهت ویرایش و یا حذف، نیاز به ارجاع آن می باشد"]);
-                elseif ($contract_subset->performance_automation->authorized_date_id == $authorized_date["id"])
-                    return redirect()->back()->withErrors(["result" => "کارکرد " . verta()->format("F") . " ماه " . $contract_subset->workplace . " ایجاد شده است.لطفا پس از یافتن رکورد متناظر از طریق جدول، در منوی عملیات اقدام به ویرایش آن نمایید"]);
+            if ($performance_automation = $contract_subset->check_automation($authorized_date)) {
+                if ($performance_automation->is_committed == 1)
+                    return redirect()->back()->withErrors(["result" => "کارکرد " . verta()->format("F") . " ماه " . $contract_subset->workplace . " تایید و ارسال نهایی شده است. جهت ویرایش و یا حذف، نیاز به ارجاع آن می باشد"]);
                 else
                     return redirect()->back()->withErrors(["result" => "کارکرد " . verta()->format("F") . " ماه " . $contract_subset->workplace . " ایجاد شده است.لطفا پس از یافتن رکورد متناظر از طریق جدول، در منوی عملیات اقدام به ویرایش آن نمایید"]);
 
@@ -128,10 +126,10 @@ class PerformanceController extends Controller
     {
         Gate::authorize('edit',"Performances");
         try {
-            $automation = PerformanceAutomation::query()->with(["contract.performance_automation.performances.employee","contract.performance_automation.attributes.items","contract.performance_attribute.items","performances","authorized_date","comments" => function($query){$query->where("user_id",Auth::id());}])
+            $automation = PerformanceAutomation::query()->with(["contract","attributes.items","performances.employee","authorized_date","comments" => function($query){$query->where("user_id",Auth::id());}])
                 ->findOrFail($id);
             $employee_performances = $automation->performances->toArray();
-            $automation->contract->performance_automation->performances->map(function ($item) use ($employee_performances) {
+            $automation->performances->map(function ($item) use ($employee_performances) {
                 $search_data = array_column($employee_performances,"employee_id");
                 $index = array_search($item->employee->id,$search_data);
                 if (gettype($index) !== 'boolean') {
@@ -152,13 +150,13 @@ class PerformanceController extends Controller
             $request->validate(["employees_data" => "required"], ["employees_data.required" => "اطلاعات کارکرد پرسنل ارسال نشده است"]);
             $employees_data = json_decode($request->input("employees_data"),true);
             if ($employees_data) {
-                $contract_subset = ContractSubset::query()->findOrFail($employees_data["id"]);
+                $contract_subset = ContractSubset::query()->findOrFail($employees_data["contract"]["id"]);
                 if (count($contract_subset->entry_date_check()) == 0)
                     return redirect()->back()->withErrors(["result" => "مهلت تایید و ارسال نهایی اطلاعات کارکرد ".verta()->format("F")." ماه ".$contract_subset->workplace." به اتمام رسیده است"]);
                 else{
                     DB::beginTransaction();
                     $automation = PerformanceAutomation::query()->findOrFail($id);
-                    foreach ($employees_data["performance_automation"]["performances"] as $item){
+                    foreach ($employees_data["performances"] as $item){
                         if (!isset($item["employee"]["performance_data"]))
                             throw new \Exception("کارکرد ".$item["employee"]["first_name"] . " " . $item["employee"]["last_name"] . " دارای کد ملی " . $item["employee"]["national_code"] . " ارسال نشده است" );
                         Performance::query()->updateOrCreate(["performance_automation_id" => $automation->id,"employee_id" => $item["employee"]["id"]],[
@@ -204,11 +202,10 @@ class PerformanceController extends Controller
 
     public function performance_export_excel($id,$authorized_date_id = null): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\RedirectResponse
     {
-        try {
+
             return Excel::download(new NewPerformanceExport($id,$authorized_date_id), 'new_performance.xlsx');
-        }
-        catch (Throwable $error){
-            return redirect()->back()->withErrors(["logical" => $error->getMessage()]);
-        }
+
+            //return redirect()->back()->withErrors(["logical" => $error->getMessage()]);
+
     }
 }

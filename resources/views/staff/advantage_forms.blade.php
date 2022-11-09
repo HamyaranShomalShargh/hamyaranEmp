@@ -77,7 +77,7 @@
                                 @endif
                             </td>
                             <td><span class="iranyekan">{{ $automation->user->name }}</span></td>
-                            <td><span class="iranyekan">{{ verta($automation->cretaed_at)->format("H:i:s Y/m/d") }}</span></td>
+                            <td><span class="iranyekan">{{ verta($automation->created_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td><span class="iranyekan">{{ verta($automation->updated_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td>
                                 @if($automation->role_priority == 1 && $automation->is_committed == 0)

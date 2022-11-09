@@ -14,7 +14,7 @@ class PerformanceAutomation extends Model
 {
     use HasFactory;
     protected $table = "performance_automation";
-    protected $fillable = ["authorized_date_id","role_id","user_id","contract_subset_id","role_priority","is_read","is_finished","is_committed","is_referred","attribute_id"];
+    protected $fillable = ["authorized_date_id","role_id","user_id","contract_subset_id","role_priority","is_read","is_finished","is_committed","is_referred","attribute_id","created_at","updated_at"];
     protected $appends = ['details_url','disagree_url'];
     public function authorized_date(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -43,10 +43,6 @@ class PerformanceAutomation extends Model
     public function comments(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {
         return $this->morphMany(AutomationComment::class,"commentable");
-    }
-    public function send_push_notification($users,$message,$id,$notification){
-        //Notification::send($users,new $notification($message,$id));
-        broadcast(new PerformanceAutomationEvent($users));
     }
     public function attributes(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -117,12 +113,14 @@ class PerformanceAutomation extends Model
     }
     public static function DateValidation($year,$month,$contract_id): array
     {
-        $automation = PerformanceAutomation::query()->with("current_role")->whereHas("authorized_date",function ($query) use ($year,$month,$contract_id){
+        $automation = PerformanceAutomation::query()->with(["current_role","contract.invoice_attribute.items" => function($query){
+            $query->orderBy("table_attribute_items.category");
+        },"contract.invoice_cover.items","performances.employee","authorized_date"])->whereHas("authorized_date",function ($query) use ($year,$month,$contract_id){
             $query->where("automation_year","=",$year)->where("automation_month","=",$month);
         })->where("contract_subset_id","=",$contract_id)->first();
         if ($automation != null){
             if ($automation->is_finished)
-                return ["result" => "ready"];
+                return ["result" => "ready","data" => $automation];
             else
                 return ["result" => "not_finished","data" => $automation->toArray()];
         }

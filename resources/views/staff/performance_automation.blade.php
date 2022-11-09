@@ -43,14 +43,15 @@
                             <div class="input-group-append">
                                 <button class="input-group-text search-filter-button" data-toggle="modal" data-target="#search_filter_modal" title="جستجوی پیشرفته" onclick="$('#search_filter_button').attr('data-table','inbox_table')"><i class="fa fa-filter fa-1-2x filter-icon"></i></button>
                             </div>
-                            <input type="text" class="form-control text-center iranyekan" placeholder="جستجو با قرارداد ، سال و ماه" data-table="inbox_table" v-on:input="filter_table">
+                            <input type="text" class="form-control text-center iranyekan" placeholder="جستجو با قرارداد ، سال و ماه" data-table="inbox-table" v-on:input="filter_table">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon1"><i class="fa fa-search fa-1-2x"></i></span>
                             </div>
                         </div>
                     </div>
-                    <div class="table-responsive p-3" v-cloak>
-                        <table id="inbox_table" class="table table-striped static-table" data-filter="[1,2,3]">
+                    <div style="overflow: hidden" class="p-3">
+                        <div id="table-scroll" class="table-scroll">
+                            <table id="inbox-table" class="main-table" v-cloak data-filter="[1,2,3]">
                             <thead class="bg-dark white-color">
                             <tr class="iransans">
                                 <th scope="col"><span>شماره</span></th>
@@ -111,6 +112,7 @@
                             </tbody>
                         </table>
                     </div>
+                    </div>
                 </div>
                 <div class="tab-pane fade" id="outbox" role="tabpanel" aria-labelledby="outbox-tab">
                     <div class="page-header">
@@ -118,14 +120,15 @@
                             <div class="input-group-append">
                                 <button class="input-group-text search-filter-button" data-toggle="modal" data-target="#search_filter_modal" title="جتجوی پیشرفته" onclick="$('#search_filter_button').attr('data-table','outbox_table')"><i class="fa fa-filter fa-1-2x filter-icon"></i></button>
                             </div>
-                            <input type="text" class="form-control text-center iranyekan" placeholder="جستجو با قرارداد ، سال و ماه" data-table="outbox_table" v-on:input="filter_table">
+                            <input type="text" class="form-control text-center iranyekan" placeholder="جستجو با قرارداد ، سال و ماه" data-table="outbox-table" v-on:input="filter_table">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon1"><i class="fa fa-search fa-1-2x"></i></span>
                             </div>
                         </div>
                     </div>
-                    <div class="table-responsive p-3" style="min: auto" v-cloak>
-                        <table id="outbox_table" class="table table-striped static-table" data-filter="[1,2,3]">
+                    <div style="overflow: hidden" class="p-3">
+                        <div id="table-scroll" class="table-scroll">
+                            <table id="outbox-table" class="main-table" v-cloak data-filter="[1,2,3]">
                             <thead class="bg-dark white-color">
                             <tr class="iransans">
                                 <th scope="col"><span>شماره</span></th>
@@ -160,7 +163,7 @@
                                     </td>
                                     <td><span class="iranyekan">{{ count($performance_outbox->performances) }}</span></td>
                                     <td><span class="iranyekan">{{ $performance_outbox->user->name }}</span></td>
-                                    <td><span class="iranyekan">{{ verta($performance_outbox->cretaed_at)->format("H:i:s Y/m/d") }}</span></td>
+                                    <td><span class="iranyekan">{{ verta($performance_outbox->created_at)->format("H:i:s Y/m/d") }}</span></td>
                                     <td><span class="iranyekan">{{ verta($performance_outbox->updated_at)->format("H:i:s Y/m/d") }}</span></td>
                                     <td>
                                         <div class="dropdown table-functions">
@@ -182,6 +185,7 @@
                             @endforelse
                             </tbody>
                         </table>
+                    </div>
                     </div>
                 </div>
             </div>

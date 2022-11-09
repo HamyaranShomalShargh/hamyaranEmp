@@ -44,7 +44,8 @@ class InvoiceController extends Controller
                     "month.required" => "انتخاب ماه الزامی می باشد",
                 ]
             );
-            $performance_exist = PerformanceAutomation::DateValidation($request->input("year"),$request->input("month"),$request->input("contract_id"));
+            $year = $request->input("year");$month = $request->input("month");
+            $performance_exist = PerformanceAutomation::DateValidation($year,$month,$request->input("contract_id"));
             switch ($performance_exist["result"]){
                 case "empty":{
                     return redirect()->back()->withErrors(["result" => "کارکرد ماهیانه این قرارداد در سال و ماه انتخاب شده وجود ندارد"]);
@@ -66,7 +67,7 @@ class InvoiceController extends Controller
                             return redirect()->back()->withErrors(["result" => "وضعیت " . verta()->format("F") . " ماه " . $contract_subset->workplace . " ایجاد شده است.لطفا پس از یافتن رکورد متناظر از طریق جدول، در منوی عملیات اقدام به ویرایش آن نمایید"]);
                     }
                     else
-                        return view("staff.new_invoice",["contract_subset" => $contract_subset]);
+                        return view("staff.new_invoice",["automation" => $performance_exist["data"]]);
 
                 }
             }
@@ -236,10 +237,10 @@ class InvoiceController extends Controller
         }
     }
 
-    public function invoice_export_excel($id,$invoice_automation_id = null): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\RedirectResponse
+    public function invoice_export_excel($id,$authorized_date_id = null,$invoice_automation_id = null): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\RedirectResponse
     {
         try {
-            return Excel::download(new NewInvoiceExport($id,$invoice_automation_id), 'new_invoice.xlsx');
+            return Excel::download(new NewInvoiceExport($id,$authorized_date_id,$invoice_automation_id), 'new_invoice.xlsx');
         }
         catch (Throwable $error){
             return redirect()->back()->withErrors(["logical" => $error->getMessage()]);

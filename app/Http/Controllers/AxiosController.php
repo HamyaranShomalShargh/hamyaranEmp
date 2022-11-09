@@ -347,7 +347,7 @@ class AxiosController extends Controller
             $response = [];
             $import_errors = [];
             $id = $request->input("contract_id");
-            $import = new PerformanceAutomationImport($id,$request->filled("authorized_date_id") ?: $request->input("authorized_date_id"));
+            $import = new PerformanceAutomationImport($id,$request->input("authorized_date_id"));
             $import->import($request->file("upload_file")->store("tmp"));
             if (count($import->failures()->toArray()) > 0){
                 foreach ($import->failures() as $failure){

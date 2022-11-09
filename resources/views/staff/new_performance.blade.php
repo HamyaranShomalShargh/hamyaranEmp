@@ -75,14 +75,15 @@
             </div>
             <div class="page-header">
                 <div class="input-group">
-                    <input type="text" class="form-control text-center iranyekan" placeholder="جستجو با نام و کد ملی" data-table="search_table" v-on:input="filter_table">
+                    <input type="text" class="form-control text-center iranyekan" placeholder="جستجو با نام و کد ملی" data-table="main-table" v-on:input="filter_table">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon1"><i class="fa fa-search fa-1-2x"></i></span>
                     </div>
                 </div>
             </div>
-            <div class="table-responsive p-3">
-                <table id="search_table" class="table table-striped static-table" data-filter="[0,1]" v-cloak>
+            <div style="overflow: hidden" class="p-3">
+                <div id="table-scroll" class="table-scroll">
+                    <table id="main-table" class="main-table" v-cloak data-filter="[0,1]">
                     <thead class="bg-dark white-color">
                     <tr class="iransans">
                         <th scope="col"><span>نام</span></th>
@@ -98,6 +99,7 @@
                     </tr>
                     </tbody>
                 </table>
+            </div>
             </div>
             <form id="main_submit_form" class="p-3" action="{{ route("Performances.store") }}" data-json="employees_data" method="post" v-on:submit="submit_form">
                 @csrf
@@ -117,7 +119,7 @@
                         <button id="submit_validated_form" type="submit" hidden form="main_submit_form"></button>
                     </button>
                 @endcan
-                <a role="button" href="{{ route("ContractHeader.index") }}" class="btn btn-outline-secondary iranyekan" data-dismiss="modal">
+                <a role="button" href="{{ route("Performances.index") }}" class="btn btn-outline-secondary iranyekan" data-dismiss="modal">
                     <i class="fa fa-arrow-turn-right fa-1-2x mr-1"></i>
                     <span class="iranyekan">بازگشت به لیست</span>
                 </a>

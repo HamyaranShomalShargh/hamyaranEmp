@@ -49,7 +49,7 @@
                             <td><span class="iranyekan">{{ $report->id }}</span></td>
                             <td><span class="iranyekan">{{ $report->operation }}</span></td>
                             <td><span class="iranyekan">{{ $report->description }}</span></td>
-                            <td><span class="iranyekan">{{ verta($report->cretaed_at)->format("H:i:s Y/m/d") }}</span></td>
+                            <td><span class="iranyekan">{{ verta($report->created_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td>
                                 <button class="btn-sm btn-outline-info mr-2" data-toggle="modal" data-target="#record_data" data-id="{{ $report->id }}" v-on:click="show_record_data($event)">
                                     <span class="iransans create-button font-size-sm">اطلاعات رکورد</span>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ContractHeaderRequest;
 use App\Models\Contract;
+use Hekmatinasser\Verta\Verta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +33,8 @@ class AdminContractHeaderController extends Controller
             $validated = $request->validated();
             DB::beginTransaction();
             $validated["user_id"] = Auth::id();
+            $validated["start_date"] = $this->to_gregorian($validated["start_date"]);
+            $validated["end_date"] = $this->to_gregorian($validated["end_date"]);
             $contract_header = Contract::query()->create($validated);
             if ($request->hasFile('upload_files')) {
                 foreach ($request->file('upload_files') as $file)
@@ -64,6 +67,8 @@ class AdminContractHeaderController extends Controller
             $validated = $request->validated();
             DB::beginTransaction();
             $validated["user_id"] = Auth::id();
+            $validated["start_date"] = $this->to_gregorian($validated["start_date"]);
+            $validated["end_date"] = $this->to_gregorian($validated["end_date"]);
             $contract_header = Contract::query()->findOrFail($id);
             $contract_header->update($validated);
             if ($request->hasFile('upload_files')) {

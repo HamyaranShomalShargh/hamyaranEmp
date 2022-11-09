@@ -59,7 +59,7 @@
                                 </span>
                             </td>
                             <td><span class="iranyekan">{{ $menu_header->user->name }}</span></td>
-                            <td><span class="iranyekan">{{ verta($menu_header->cretaed_at)->format("H:i:s Y/m/d") }}</span></td>
+                            <td><span class="iranyekan">{{ verta($menu_header->created_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td><span class="iranyekan">{{ verta($menu_header->updated_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td>
                                 <div class="dropdown table-functions iranyekan">

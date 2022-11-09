@@ -58,7 +58,7 @@
                             <td><span class="iranyekan">{{ $title->name }}</span></td>
                             <td><span class="iranyekan">{{ count($title->items) }}</span></td>
                             <td><span class="iranyekan">{{ $title->user->name }}</span></td>
-                            <td><span class="iranyekan">{{ verta($title->cretaed_at)->format("H:i:s Y/m/d") }}</span></td>
+                            <td><span class="iranyekan">{{ verta($title->created_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td><span class="iranyekan">{{ verta($title->updated_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td>
                                 <div class="dropdown table-functions iranyekan">

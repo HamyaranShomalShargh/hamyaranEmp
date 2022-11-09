@@ -7,6 +7,7 @@ use App\Events\PerformanceAutomationEvent;
 use App\Models\InvoiceCoverTitleItem;
 use App\Models\TableAttributeItem;
 use Exception;
+use Hekmatinasser\Verta\Verta;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -140,7 +141,7 @@ class Controller extends BaseController
         $deductions = [
             "بیمه تکمیل درمان سهم کارمند","معوقه بیمه تکمیل درمان سهم کارمند",
             "کسورات صندوق","کسورات وام دوم صندوق","کسورات وام سوم صندوق","معوقه کسورات صندوق","حق عضویت","پس انداز قرض الحسنه شهرداری","خدمات بیمه ایی",
-            "همیار حامی","معوقه خدمات بیمه ای همیار حامی","خدمات بیمه ایی","فرهیختگان","بیمه حامیان شهر توس","کسورات بازگشت به شهرداری","قوه قضاییه - بانک (همیاران)",
+            "همیار حامی","معوقه خدمات بیمه ای همیار حامی","خدمات بیمه ایی فرهیختگان","بیمه حامیان شهر توس","کسورات بازگشت به شهرداری","قوه قضاییه - بانک (همیاران)",
             "قسط مساعده از شرکت و خرید دوچرخه","بیمه ماشین","معوقه بیمه ماشین","مساعده از سازمان","صندوق رفاه سازمان","کسورات بیمه عمر", "دادگاه و بانک (سازمان)"
         ];
         $items = [];
@@ -152,5 +153,10 @@ class Controller extends BaseController
             $items[] = new TableAttributeItem(["name" => $deduction, "category" => "deduction", "kind" => "number", "is_operable" => 0]);
 
         return $items;
+    }
+    public function to_gregorian($date): string
+    {
+        $date_sep = explode("/",$date);
+        return implode("-",Verta::jalaliToGregorian($date_sep[0],$date_sep[1],$date_sep[2]));
     }
 }

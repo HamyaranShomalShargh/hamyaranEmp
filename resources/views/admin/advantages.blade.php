@@ -66,7 +66,7 @@
                                 </span>
                             </td>
                             <td><span class="iranyekan">{{ $advantage->user->name }}</span></td>
-                            <td><span class="iranyekan">{{ verta($advantage->cretaed_at)->format("H:i:s Y/m/d") }}</span></td>
+                            <td><span class="iranyekan">{{ verta($advantage->created_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td><span class="iranyekan">{{ verta($advantage->updated_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td>
                                 <div class="dropdown table-functions">

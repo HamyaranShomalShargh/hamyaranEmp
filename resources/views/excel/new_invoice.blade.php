@@ -5,13 +5,13 @@
         <th style="color: #ffffff;background-color: #343A40">نام</th>
         <th style="color: #ffffff;background-color: #343A40">کد ملی</th>
         <th style="color: #ffffff;background-color: #343A40">گروه شغلی</th>
-        @if($contract->invoice_automation)
+        @if($type == "created")
             @forelse($contract->invoice_automation->attributes->items as $attribute)
                 <th style="color: #ffffff;background-color: #343A40">{{ $attribute->name }}</th>
             @empty
             @endforelse
         @else
-            @forelse($contract->invoice_attribute->items as $attribute)
+            @forelse($automation->contract->invoice_attribute->items as $attribute)
                 <th style="color: #ffffff;background-color: #343A40">{{ $attribute->name }}</th>
             @empty
             @endforelse
@@ -19,7 +19,7 @@
     </tr>
     </thead>
     <tbody>
-    @if($contract->invoice_automation)
+    @if($type == "created")
         @forelse($contract->invoice_automation->invoices as $invoice)
             <tr>
                 <td>{{ $loop->iteration }}</td>
@@ -34,7 +34,7 @@
         @empty
         @endforelse
     @else
-        @forelse($contract->performance_automation->performances as $performance)
+        @forelse($automation->performances as $performance)
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $performance->employee->first_name." ".$performance->employee->last_name }}</td>

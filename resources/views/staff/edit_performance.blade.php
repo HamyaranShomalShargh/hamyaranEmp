@@ -1,7 +1,7 @@
 @extends('layouts.staff_dashboard')
 @push('scripts')
     <script>
-        let table_data = @json($contract_subset);
+        let table_data = @json($automation);
     </script>
 @endpush
 @section('content')
@@ -37,7 +37,7 @@
                     <div class="input-group-append">
                         <span class="input-group-text" id="basic-addon1"><i class="fa fa-table-cells fa-1-2x"></i></span>
                     </div>
-                    <input type="text" class="form-control iranyekan" readonly value="{{ "کارکرد ماهانه پرسنل ".$contract_subset->name."(".$contract_subset->workplace.") ".$authorized_date["month_name"]." ماه سال ".$authorized_date["automation_year"] }}">
+                    <input type="text" class="form-control iranyekan" readonly value="{{ "کارکرد ماهانه پرسنل ".$automation->contract->name."(".$contract_subset->workplace.") ".$authorized_date["month_name"]." ماه سال ".$authorized_date["automation_year"] }}">
                     <div class="input-group-prepend bg-white">
                         <span class="input-group-text bg-dark" style="border-radius: 0" id="basic-addon1">
                             <span class="iranyekan white-color">
@@ -48,7 +48,7 @@
                     </div>
                     <div class="input-group-prepend bg-white">
                         <span class="input-group-text bg-secondary white-color" style="border-radius: 0" id="basic-addon1">
-                            <span class="iranyekan">{{ $contract_subset->performance_automation->performances()->count() }}</span>
+                            <span class="iranyekan">{{ $automation->performances()->count() }}</span>
                         </span>
                     </div>
                     <div class="input-group-prepend bg-white">
@@ -61,7 +61,7 @@
                     </div>
                     <div class="input-group-prepend bg-white">
                         <span class="input-group-text bg-secondary white-color" style="border-radius: 0" id="basic-addon1">
-                            <span class="iranyekan">{{ $contract_subset->overtime_registration_limit }}</span>
+                            <span class="iranyekan">{{ $automation->contract->overtime_registration_limit }}</span>
                         </span>
                     </div>
                     <div class="input-group-prepend bg-white">
@@ -73,29 +73,31 @@
             </div>
             <div class="page-header">
                 <div class="input-group">
-                    <input type="text" class="form-control text-center iranyekan" placeholder="جستجو با نام و کد ملی" data-table="search_table" v-on:input="filter_table">
+                    <input type="text" class="form-control text-center iranyekan" placeholder="جستجو با نام و کد ملی" data-table="main-table" v-on:input="filter_table">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon1"><i class="fa fa-search fa-1-2x"></i></span>
                     </div>
                 </div>
             </div>
-            <div class="table-responsive p-3">
-                <table id="search_table" class="table table-striped static-table" data-filter="[0,1]" v-cloak>
+            <div style="overflow: hidden" class="p-3">
+                <div id="table-scroll" class="table-scroll">
+                    <table id="main-table" class="main-table" v-cloak data-filter="[0,1]">
                     <thead class="bg-dark white-color">
                     <tr class="iransans">
                         <th scope="col"><span>نام</span></th>
                         <th scope="col"><span>کد ملی</span></th>
-                        <th scope="col" v-for="attribute in table_data_records.performance_attribute.items"><span>@{{ attribute.name }}</span></th>
+                        <th scope="col" v-for="attribute in table_data_records.attributes.items"><span>@{{ attribute.name }}</span></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="item in table_data_records.performance_automation.performances">
+                    <tr v-for="item in table_data_records.performances">
                         <td><span class="iranyekan">@{{ item.employee.first_name + " " + item.employee.last_name }}</span></td>
                         <td><span class="iranyekan">@{{ item.employee.national_code }}</span></td>
-                        <td v-for="(attribute,index) in table_data_records.performance_automation.attributes.items" style="min-width: 90px"><input class="form-control iranyekan text-center" :type="attribute['kind']" min="0" :value="get_employee_performance_value(item.employee.id,index)" v-on:input="set_employee_performance_value($event,item.employee.id,index)"></td>
+                        <td v-for="(attribute,index) in table_data_records.attributes.items" style="min-width: 90px"><input class="form-control iranyekan text-center" :type="attribute['kind']" min="0" :value="get_employee_performance_value(item.employee_id,index)" v-on:input="set_employee_performance_value($event,item.employee_id,index)"></td>
                     </tr>
                     </tbody>
                 </table>
+            </div>
             </div>
             <form id="main_submit_form" class="p-3" action="{{ route("Performances.update",$automation->id) }}" data-json="employees_data" method="post" v-on:submit="submit_form">
                 @csrf
@@ -136,7 +138,7 @@
                                 فایل اکسل کارکرد
                             </label>
                             <s-file-browser :accept='["xlsx","xls"]' :size="500000"></s-file-browser>
-                            <input type="hidden" value="{{ $contract_subset->id }}" id="contract_id">
+                            <input type="hidden" value="{{ $automation->contract->id }}" id="contract_id">
                             <input type="hidden" value="{{ $authorized_date->id }}" id="authorized_date_id">
                             @error('upload_file')
                             <span class="invalid-feedback iranyekan small_font" role="alert">{{ $message }}</span>

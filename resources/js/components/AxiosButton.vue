@@ -75,7 +75,6 @@ export default {
                             axios.post(self.$props.route, data)
                                 .then(function (response) {
                                     self.$root.$data.show_loading = false;
-                                    console.log(response.data.data);
                                     if (response.data !== null) {
                                         if (response.data.data)
                                             self.$root.$data.table_data_records = response.data.data;

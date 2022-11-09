@@ -32,14 +32,14 @@ import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
 window.Pusher = Pusher;
-Pusher.logToConsole = true;
+//Pusher.logToConsole = true;
 window.Echo = new Echo({
     broadcaster: 'pusher',
     key: process.env.MIX_PUSHER_APP_KEY,
-    wsHost: window.location.hostname,
-    wsPort: process.env.MIX_PUSHER_PORT,
-    wssPort: process.env.MIX_PUSHER_PORT,
+    cluster: process.env.MIX_PUSHER_APP_CLUSTER,
     forceTLS: true,
-    enabledTransports: ['ws', 'wss'],
-    disableStats: true,
+    channelAuthorization: {
+        endpoint: "/broadcasting/auth",
+        headers: { "X-CSRF-Token": token },
+    }
 });

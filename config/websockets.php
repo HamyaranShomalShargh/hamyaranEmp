@@ -8,7 +8,7 @@ return [
      * Set a custom dashboard configuration
      */
     'dashboard' => [
-        'port' => env('PUSHER_PORT', 6002),
+        'port' => env('PUSHER_PORT', 6001),
     ],
 
     /*
@@ -30,7 +30,7 @@ return [
             'path' => env('PUSHER_APP_PATH'),
             'capacity' => null,
             'enable_client_messages' => false,
-            'enable_statistics' => true,
+            'enable_statistics' => false,
         ],
     ],
 
@@ -48,7 +48,6 @@ return [
      * Leave this empty if you want to accept requests from all hosts.
      */
     'allowed_origins' => [
-        //
     ],
 
     /*
@@ -128,7 +127,7 @@ return [
          * Passphrase for your local_cert file.
          */
         'passphrase' => env('WEBSOCKETS_SSL_PASSPHRASE', null),
-        'verify_peer' => false,
+        //'verify_peer' => false,
     ],
 
     /*

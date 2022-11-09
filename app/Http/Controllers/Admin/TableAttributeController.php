@@ -77,7 +77,12 @@ class TableAttributeController extends Controller
             $validated = $request->validated();
             $validated["user_id"] = Auth::id();
             $table_attribute = TableAttribute::query()->findOrFail($id);
-            $table_attribute->items()->where("is_operable","=",1)->delete();
+            $table_attribute->items()->delete();
+            $default_attributes = DefaultTableAttribute::attributes($validated["type"]);
+            $insertion_array = [];
+            foreach ($default_attributes as $attribute)
+                $insertion_array[] = new TableAttributeItem(["name" =>$attribute->name,"category" => $attribute->category != "ندارد" ? $attribute->category : "note" ,"kind" => $attribute->kind,"is_operable" => 0]);
+            $table_attribute->items()->saveMany($insertion_array);
             $custom_attributes = json_decode($validated["attributes_list"],true);
             foreach ($custom_attributes as $attribute){
                 $table_attribute->items()->create([

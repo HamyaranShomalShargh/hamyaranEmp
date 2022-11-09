@@ -85,7 +85,7 @@
                                 @endif
                             </td>
                             <td><span class="iranyekan">{{ $contract_subset->user->name }}</span></td>
-                            <td><span class="iranyekan">{{ verta($contract_subset->cretaed_at)->format("H:i:s Y/m/d") }}</span></td>
+                            <td><span class="iranyekan">{{ verta($contract_subset->created_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td><span class="iranyekan">{{ verta($contract_subset->updated_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td>
                                 <div class="dropdown table-functions iranyekan">

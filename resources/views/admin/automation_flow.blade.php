@@ -57,7 +57,7 @@
                                 @endif
                             </td>
                             <td><span class="iranyekan">{{ $automation_flow->user->name }}</span></td>
-                            <td><span class="iranyekan">{{ verta($automation_flow->cretaed_at)->format("H:i:s Y/m/d") }}</span></td>
+                            <td><span class="iranyekan">{{ verta($automation_flow->created_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td><span class="iranyekan">{{ verta($automation_flow->updated_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td>
                                 <div class="dropdown table-functions iranyekan">

@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\ContractSubset;
 use App\Models\Employee;
+use App\Models\PerformanceAutomation;
 use App\Rules\NationalCodeChecker;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -24,10 +25,10 @@ class PerformanceAutomationImport implements ToArray,WithValidation,SkipsOnFailu
     use Importable, SkipsFailures;
 
     private int $contract_subset_id;
-    private mixed $authorized_date_id;
+    private int $authorized_date_id;
     private array $result = [];
 
-    public function __construct($contract_subset_id,$authorized_date_id = null)
+    public function __construct($contract_subset_id,$authorized_date_id)
     {
         $this->contract_subset_id = $contract_subset_id;
         $this->authorized_date_id = $authorized_date_id;
@@ -78,14 +79,16 @@ class PerformanceAutomationImport implements ToArray,WithValidation,SkipsOnFailu
     public function array(array $array)
     {
         $array = array_values($array);
-        $contract_subset = ContractSubset::query()->with(["contract","performance_automation.performances.employee","performance_automation.attributes.items"])->findOrFail($this->contract_subset_id);
-        $contract_subset->performance_automation->performances->map(function ($item) use ($array) {
-            $search_data = array_column($array, 2);
-            $index = array_search($item->employee->national_code, $search_data);
-            if (gettype($index) !== 'boolean') {
-                if (auth()->user()->can("edit_values","PerformanceAutomation")) {
-                    $item->employee["job_group"] = $array[$index][3];
-                    $item->employee["daily_wage"] = $array[$index][4];
+        $automation = PerformanceAutomation::query()->with(["contract", "performances.employee", "attributes.items"])->whereHas("authorized_date", function ($query) {
+            $query->where("automation_authorized_date.id", "=", $this->authorized_date_id);
+        })->where("contract_subset_id", "=", $this->contract_subset_id)->first();
+        if ($automation) {
+            $automation->performances->map(function ($item) use ($array) {
+                $search_data = array_column($array, 2);
+                $index = array_search($item->employee->national_code, $search_data);
+                if (gettype($index) !== 'boolean') {
+                    $item->employee->job_group = $array[$index][3];
+                    $item->employee->daily_wage = $array[$index][4];
                     $item->job_group = $array[$index][3];
                     $item->daily_wage = $array[$index][4];
                     unset($array[$index][0]);
@@ -96,9 +99,9 @@ class PerformanceAutomationImport implements ToArray,WithValidation,SkipsOnFailu
                     $array[$index] = array_values($array[$index]);
                     $item->employee["performance_data"] = $array[$index];
                 }
-            }
-        });
-        $this->result = $contract_subset->toArray();
+            });
+            $this->result = $automation->toArray();
+        }
     }
     public function getResult(): array
     {

@@ -9,7 +9,7 @@ class AutomationSign extends Model
 {
     use HasFactory;
     protected $table = "automation_signs";
-    protected $fillable = ["signable_id","signable_type","user_id","sign"];
+    protected $fillable = ["signable_id","signable_type","user_id","sign","created_at","updated_at"];
 
     public function signable(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {

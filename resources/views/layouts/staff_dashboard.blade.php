@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <link rel="icon" type="image/x-icon" href="{{ asset("/images/logo.ico?v=2.01") }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>داشبورد</title>
     <link href="{{ asset('css/app.css?v=').$company_information->app_version }}" rel="stylesheet">
     @stack('styles')
-    <script src="{{ asset('/js/app.js?v=').$company_information->app_version }}" async></script>
+    <script src="{{ asset('/js/app.js?v=').$company_information->app_version }}" defer></script>
 {{--    <script src="{{ asset('/js/enable_push.js?v='.time()) }}" defer></script>--}}
     <script>
         window.Laravel = {!! json_encode([
@@ -79,19 +80,19 @@
                 <ul class="ribbon-container">
                     <li class="position-relative ribbon-li">
                         <a role="button" href="{{route("account.information")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-between">
-                            <img src="{{asset("/storage/menu_item_icons/{$item->id}/{$item->icon}")}}" alt="menu">
+                            <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/user_inf.png")}}" alt="menu">
                             <span class="iranyekan ribbon-item-text">حساب کاربری</span>
                         </a>
                     </li>
                     <li class="position-relative ribbon-li">
                         <a role="button" href="{{route("account.verification")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-between">
-                            <img src="{{asset("/storage/menu_item_icons/{$item->id}/{$item->icon}")}}" alt="menu">
+                            <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/verification.png")}}" alt="menu">
                             <span class="iranyekan ribbon-item-text">تاییدیه اطلاعات</span>
                         </a>
                     </li>
                     <li class="position-relative ribbon-li">
                         <a role="button" href="{{route("user.password.reset")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-between">
-                            <img src="{{asset("/storage/menu_item_icons/{$item->id}/{$item->icon}")}}" alt="menu">
+                            <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/password.png")}}" alt="menu">
                             <span class="iranyekan ribbon-item-text">تغییر گذرواژه</span>
                         </a>
                     </li>
@@ -101,7 +102,7 @@
                             <div class="form-row p-0 m-0">
                                 <div class="form-group col-12 p-0 m-0">
                                     <button type="submit" form="logout_form" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-between">
-                                        <img src="{{asset("/storage/menu_item_icons/{$item->id}/{$item->icon}")}}" alt="menu">
+                                        <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/exit.png")}}" alt="menu">
                                         <span class="iranyekan ribbon-item-text">خروج</span>
                                     </button>
                                 </div>
@@ -130,7 +131,7 @@
             </div>
         @endif
         @if(session()->has("result"))
-            <div class="w-100 information-box mt-2">
+            <div class="position-absolute information-box mt-2">
                 <div class="alert alert-{{ session("result") }} iransans mb-0 h-100 border border-{{ session("result") }} pt-3 pb-3" role="alert">
                     <h6 class="pt-2 font-weight-bold">
                         @switch(session("result"))

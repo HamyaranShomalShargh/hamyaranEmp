@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\ContractSubset;
+use App\Models\PerformanceAutomation;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Hash;
 use JetBrains\PhpStorm\ArrayShape;
@@ -18,14 +19,20 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class NewInvoiceExport extends StringValueBinder implements FromView,WithStyles,WithEvents,WithTitle,WithProperties
 {
     private int $contract_subset_id;
+    private mixed $authorized_date_id;
+    private mixed $invoice_automation_id;
+    private mixed $automation;
+    private string $type;
     private array $columns;
     private array|null|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model $contract;
     private int $highest_column;
-    public function __construct($contract_subset_id,$invoice_automation_id = null)
+    public function __construct($contract_subset_id,$authorized_date_id = null,$invoice_automation_id = null)
     {
         $this->contract_subset_id = $contract_subset_id;
-        if ($invoice_automation_id) {
-            $this->contract = ContractSubset::query()->with(["contract",
+        $this->authorized_date_id = $authorized_date_id;
+        $this->invoice_automation_id = $invoice_automation_id;
+        if ($this->invoice_automation_id) {
+            $this->automation = ContractSubset::query()->with(["contract",
                 "invoice_automation.authorized_date",
                 "invoice_automation.invoices.employee",
                 "invoice_attribute.items"])->whereHas("invoice_automation", function ($query) use ($invoice_automation_id) {
@@ -40,16 +47,21 @@ class NewInvoiceExport extends StringValueBinder implements FromView,WithStyles,
                 }
             });
         }
-        else
-            $this->contract = ContractSubset::query()->with(["performance_automation.authorized_date",
-                "performance_automation.performances.employee",
-                "invoice_attribute.items"])->findOrFail($this->contract_subset_id);
+        else {
+            $this->automation = PerformanceAutomation::query()->with(["contract.invoice_attribute.items" => function($query){
+                $query->orderBy("table_attribute_items.category");
+            }, "contract.invoice_cover.items", "performances.employee"])
+                ->whereHas("authorized_date", function ($query) {
+                    $query->where("automation_authorized_date.id", "=", $this->authorized_date_id);
+                })->where("contract_subset_id", "=", $this->contract_subset_id)->first();
+            $this->type = "new";
+        }
         $this->columns = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
             "AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ","AR","AS","AT","AU","AV","AW","AX","AY","AZ",
             "BA","BB","BC","BD","BE","BF","BG","BH","BI","BJ","BK","BL","BM","BN","BO","BP","BQ","BR","BS","BT","BU","BV","BW","BX","BY","BZ",
             "CA","CB","CC","CD","CE","CF","CG","CH","CI","CJ","CK","CL","CM","CN","CO","CP","CQ","CR","CS","CT","CU","CV","CW","CX","CY","CZ"
         ];
-        $this->highest_column = count($this->contract->performance_attribute->items) + 3;
+        $this->highest_column = count($this->automation->contract->invoice_attribute->items) + 3;
     }
     public function styles(Worksheet $sheet)
     {
@@ -62,7 +74,7 @@ class NewInvoiceExport extends StringValueBinder implements FromView,WithStyles,
         $sheet->getColumnDimension('B')->setWidth(25);
         $sheet->getColumnDimension('C')->setWidth(15);
         $index = 3;
-        foreach ($this->contract->performance_attribute->items as $attribute){
+        foreach ($this->automation->contract->invoice_attribute->items as $attribute){
             $sheet->getColumnDimension($this->columns[$index++])->setWidth(15);
         }
     }
@@ -76,7 +88,7 @@ class NewInvoiceExport extends StringValueBinder implements FromView,WithStyles,
     }
     public function view(): View
     {
-        return view('excel.new_invoice',["contract" => $this->contract]);
+        return view('excel.new_invoice',["automation" => $this->automation,"type" => $this->type]);
     }
 
     public function title(): string

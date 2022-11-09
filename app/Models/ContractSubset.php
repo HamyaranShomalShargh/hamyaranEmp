@@ -47,17 +47,17 @@ class ContractSubset extends Model
     {
         return $this->belongsTo(AutomationFlow::class,"invoice_flow_id");
     }
-    public function performance_automation(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function performance_automation(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasOne(PerformanceAutomation::class,"contract_subset_id");
+        return $this->hasMany(PerformanceAutomation::class,"contract_subset_id");
     }
     public function performance_attribute(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(TableAttribute::class,"performance_attributes_id");
     }
-    public function invoice_automation(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function invoice_automation(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasOne(InvoiceAutomation::class,"contract_subset_id");
+        return $this->hasMany(InvoiceAutomation::class,"contract_subset_id");
     }
     public function invoice_attribute(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -83,5 +83,11 @@ class ContractSubset extends Model
             return $date->toArray();
         }
         return [];
+    }
+    public function check_automation($date): \Illuminate\Database\Eloquent\Builder|Model|\Illuminate\Database\Eloquent\Relations\HasMany|null
+    {
+        return $this->performance_automation()->whereHas("authorized_date",function ($query) use ($date){
+            $query->where("automation_authorized_date.id","=",$date["id"]);
+        })->first();
     }
 }

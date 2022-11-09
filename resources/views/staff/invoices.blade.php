@@ -25,14 +25,15 @@
                             <span class="iransans create-button">وضعیت جدید</span>
                         </button>
                     </div>
-                    <input type="text" class="form-control text-center iranyekan" placeholder="جستجو با قرارداد ، سال و ماه" data-table="search_table" v-on:input="filter_table">
+                    <input type="text" class="form-control text-center iranyekan" placeholder="جستجو با قرارداد ، سال و ماه" data-table="main-table" v-on:input="filter_table">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon1"><i class="fa fa-search fa-1-2x"></i></span>
                     </div>
                 </div>
             </div>
-            <div class="table-responsive p-3">
-                <table id="search_table" class="table table-striped static-table" data-filter="[1,2,3]">
+            <div style="overflow: hidden" class="p-3">
+                <div id="table-scroll" class="table-scroll">
+                    <table id="main-table" class="main-table" v-cloak data-filter="[1,2,3]">
                     <thead class="bg-dark white-color">
                     <tr class="iransans">
                         <th scope="col"><span>شماره</span></th>
@@ -67,7 +68,7 @@
                             </td>
                             <td><span class="iranyekan">{{ count($invoice->Invoices) }}</span></td>
                             <td><span class="iranyekan">{{ $invoice->user->name }}</span></td>
-                            <td><span class="iranyekan">{{ verta($invoice->cretaed_at)->format("H:i:s Y/m/d") }}</span></td>
+                            <td><span class="iranyekan">{{ verta($invoice->created_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td><span class="iranyekan">{{ verta($invoice->updated_at)->format("H:i:s Y/m/d") }}</span></td>
                             <td>
                                 @if($invoice->role_priority == 1 && $invoice->is_committed == 0)
@@ -114,6 +115,7 @@
                     @endforelse
                     </tbody>
                 </table>
+            </div>
             </div>
         </div>
     </div>
