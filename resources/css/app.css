@@ -772,6 +772,9 @@ input[type='radio'],input[type='checkbox']{
     left: 0;
     bottom: 0;
 }
+.thousand_separator{
+    min-width: 70px!important;
+}
 @media screen and (max-width: 900px){
     .login-box{
         min-width: 93vw;

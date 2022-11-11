@@ -3,6 +3,8 @@
 namespace App\Imports;
 
 use App\Models\ContractSubset;
+use App\Models\InvoiceAutomation;
+use App\Models\PerformanceAutomation;
 use App\Rules\NationalCodeChecker;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
@@ -22,15 +24,30 @@ class PreInvoiceImport implements ToArray,WithValidation,SkipsOnFailure,WithEven
     use Importable, SkipsFailures;
 
     private int $contract_subset_id;
-    private mixed $performance_automation_id;
-    private mixed $invoice_automation_id;
+    private mixed $automation_id;
+    private string $type;
+    private mixed $automation;
     private array $result = [];
 
-    public function __construct($contract_subset_id,$performance_automation_id,$invoice_automation_id = null)
+    public function __construct($contract_subset_id,$automation_id,$type)
     {
         $this->contract_subset_id = $contract_subset_id;
-        $this->performance_automation_id = $performance_automation_id;
-        $this->invoice_automation_id = $invoice_automation_id;
+        $this->automation_id = $automation_id;
+        $this->type = $type;
+        switch ($this->type){
+            case "new":{
+                $this->automation = PerformanceAutomation::query()->with(["performances.employee","contract.invoice_attribute.items" => function($query){
+                    $query->orderBy("table_attribute_items.category");
+                },"authorized_date"])->findOrFail($this->automation_id);
+                break;
+            }
+            case "created":{
+                $this->automation = InvoiceAutomation::query()->with(["invoices.employee","attributes.items" => function($query){
+                    $query->orderBy("table_attribute_items.category");
+                },"authorized_date"])->findOrFail($this->automation_id);
+                break;
+            }
+        }
     }
 
     #[ArrayShape(["2" => "array"])] public function rules(): array
@@ -78,40 +95,22 @@ class PreInvoiceImport implements ToArray,WithValidation,SkipsOnFailure,WithEven
     public function array(array $array)
     {
         $array = array_values($array);
-        if ($this->invoice_automation_id){
-            $contract_subset = ContractSubset::query()->with(["contract","invoice_automation.invoices.employee","invoice_automation.attributes.items"])->findOrFail($this->contract_subset_id);
-            $contract_subset->invoice_automation->invoices->map(function ($item) use ($array) {
-                $search_data = array_column($array, 2);
-                $index = array_search($item->employee->national_code, $search_data);
-                if (gettype($index) !== 'boolean') {
-                    unset($array[$index][0]);
-                    unset($array[$index][1]);
-                    unset($array[$index][2]);
-                    unset($array[$index][3]);
-                    $array[$index] = array_values($array[$index]);
-                    $item->employee["invoice_data"] = $array[$index];
-                }
-            });
-        }
-        else {
-            $contract_subset = ContractSubset::query()->with(["contract","performance_automation.performances.employee","invoice_attribute.items"])->findOrFail($this->contract_subset_id);
-            $contract_subset->performance_automation->performances->map(function ($item) use ($array) {
-                $search_data = array_column($array, 2);
-                $index = array_search($item->employee->national_code, $search_data);
-                if (gettype($index) !== 'boolean') {
-                    unset($array[$index][0]);
-                    unset($array[$index][1]);
-                    unset($array[$index][2]);
-                    unset($array[$index][3]);
-                    $array[$index] = array_values($array[$index]);
-                    $item->employee["invoice_data"] = $array[$index];
-                }
-            });
-        }
-        $this->result = $contract_subset->toArray();
+        $automation_type = $this->type == "new" ? "performances" : "invoices";
+        $this->automation->$automation_type->map(function ($item) use ($array) {
+            $search_data = array_column($array, 2);
+            $index = array_search($item->employee->national_code, $search_data);
+            if (gettype($index) !== 'boolean') {
+                unset($array[$index][0]);
+                unset($array[$index][1]);
+                unset($array[$index][2]);
+                unset($array[$index][3]);
+                $array[$index] = array_values($array[$index]);
+                $item->employee["invoice_data"] = $array[$index];
+            }
+        });
     }
     public function getResult(): array
     {
-        return $this->result;
+        return $this->automation->toArray();
     }
 }

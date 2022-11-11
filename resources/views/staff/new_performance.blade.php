@@ -50,7 +50,7 @@
                     </div>
                     <div class="input-group-prepend bg-white">
                         <span class="input-group-text bg-secondary white-color" style="border-radius: 0" id="basic-addon1">
-                            <span class="iranyekan">{{ $contract_subset->employees()->count() }}</span>
+                            <span class="iranyekan">{{ count($contract_subset->employees) }}</span>
                         </span>
                     </div>
                     <div class="input-group-prepend bg-white">

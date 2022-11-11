@@ -399,6 +399,8 @@ const app = new Vue({
                             json_data = JSON.stringify(self.table_data_records);
                         else if (self.table_data_records?.performances)
                             json_data = JSON.stringify(self.table_data_records);
+                        else if (self.table_data_records?.invoices)
+                            json_data = JSON.stringify(self.table_data_records);
                         break;
                     }
                     case "attributes_list":{
@@ -705,11 +707,11 @@ const app = new Vue({
                 $("#submit_validated_form").click();
         },
         get_employee_invoice_value(id,i){
-            if (this.table_data_records.invoice_automation?.invoices) {
-                let index = this.table_data_records.invoice_automation.invoices.map((item) => {return item.employee.id;}).indexOf(id);
-                if (typeof this.table_data_records.invoice_automation.invoices[index].employee["invoice_data"] !== "undefined") {
-                    if (typeof this.table_data_records.invoice_automation.invoices[index].employee["invoice_data"][i] !== "undefined")
-                        return this.table_data_records.invoice_automation.invoices[index].employee["invoice_data"][i] !== null ? this.table_data_records.invoice_automation.invoices[index].employee["invoice_data"][i] : 0;
+            if (this.table_data_records?.invoices) {
+                let index = this.table_data_records.invoices.map((item) => {return item.employee.id;}).indexOf(id);
+                if (typeof this.table_data_records.invoices[index].employee["invoice_data"] !== "undefined") {
+                    if (typeof this.table_data_records.invoices[index].employee["invoice_data"][i] !== "undefined")
+                        return this.table_data_records.invoices[index].employee["invoice_data"][i] !== null ? this.table_data_records.invoices[index].employee["invoice_data"][i] : 0;
                 }
             }
             else {
@@ -722,12 +724,12 @@ const app = new Vue({
             return 0;
         },
         set_employee_invoice_value(e,id,i){
-            if (this.table_data_records?.invoice_automation?.invoices){
+            if (this.table_data_records?.invoices){
                 e.target.value === "" || e.target.value === null ? e.target.value = 0 : "";
-                let index = this.table_data_records.invoice_automation.invoices.map((item) => { return item.employee.id; }).indexOf(id);
-                if(typeof this.table_data_records.invoice_automation.invoices[index].employee["invoice_data"] !== "undefined"){
-                    if (typeof this.table_data_records.invoice_automation.invoices[index].employee["invoice_data"][i] !== "undefined") {
-                        this.table_data_records.invoice_automation.invoices[index].employee["invoice_data"][i] = e.target.type === 'number' ? Number(e.target.value) : e.target.value;
+                let index = this.table_data_records.invoices.map((item) => { return item.employee.id; }).indexOf(id);
+                if(typeof this.table_data_records.invoices[index].employee["invoice_data"] !== "undefined"){
+                    if (typeof this.table_data_records.invoices[index].employee["invoice_data"][i] !== "undefined") {
+                        this.table_data_records.invoices[index].employee["invoice_data"][i] = e.target.type === 'number' ? Number(e.target.value) : e.target.value;
                     }
                 }
             }

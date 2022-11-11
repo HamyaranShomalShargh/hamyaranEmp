@@ -51,7 +51,7 @@ class InvoiceController extends Controller
                     return redirect()->back()->withErrors(["result" => "کارکرد ماهیانه این قرارداد در سال و ماه انتخاب شده وجود ندارد"]);
                 }
                 case "not_finished":{
-                    return redirect()->back()->withErrors(["result" => "گردش اتوماسیون وضعیت ماهیانه این قرارداد در سال و ماه انتخاب شده منتظر تایید ".$performance_exist["data"]["current_role"]["name"]." بوده و به اتمام نرسیده است"]);
+                    return redirect()->back()->withErrors(["result" => "گردش اتوماسیون کارکرد ماهیانه این قرارداد در سال و ماه انتخاب شده منتظر تایید ".$performance_exist["data"]["current_role"]["name"]." بوده و به اتمام نرسیده است"]);
                 }
                 default:{
                     $contract_subset = ContractSubset::query()->with([
@@ -62,7 +62,7 @@ class InvoiceController extends Controller
                         "invoice_attribute.items"])->findOrFail($request->input("contract_id"));
                     if ($contract_subset->invoice_automation()->exists()) {
                         if ($contract_subset->invoice_automation->is_committed == 1)
-                            return redirect()->back()->withErrors(["result" => "کاربر گرامی، وضعیت " . verta()->format("F") . " ماه " . $contract_subset->workplace . " تایید و ارسال نهایی شده است. جهت ویرایش و یا حذف، نیاز به ارجاع آن می باشد"]);
+                            return redirect()->back()->withErrors(["result" => "وضعیت " . verta()->format("F") . " ماه " . $contract_subset->workplace . " تایید و ارسال نهایی شده است. جهت ویرایش و یا حذف، نیاز به ارجاع آن می باشد"]);
                         else
                             return redirect()->back()->withErrors(["result" => "وضعیت " . verta()->format("F") . " ماه " . $contract_subset->workplace . " ایجاد شده است.لطفا پس از یافتن رکورد متناظر از طریق جدول، در منوی عملیات اقدام به ویرایش آن نمایید"]);
                     }
@@ -86,21 +86,21 @@ class InvoiceController extends Controller
             $employees_data = json_decode($request->input("employees_data"), true);
             $invoice_cover_data = json_decode($request->input("invoice_cover_data"), true);
             if ($employees_data && $invoice_cover_data) {
-                $contract_subset = ContractSubset::query()->with("performance_automation")->findOrFail($employees_data["id"]);
-                if ($contract_subset->performance_automation->authorized_date()->exists()) {
+                $performance_automation = PerformanceAutomation::query()->with(["contract.invoice_attribute","contract.invoice_cover"])->findOrFail($employees_data["id"]);
+                if ($performance_automation->authorized_date()->exists()) {
                     DB::beginTransaction();
                     $automation = InvoiceAutomation::query()->firstOrCreate([
-                        "contract_subset_id" => $contract_subset->id,
-                        "authorized_date_id" => $contract_subset->performance_automation->authorized_date_id], [
-                        "authorized_date_id" => $contract_subset->performance_automation->authorized_date_id,
+                        "contract_subset_id" => $performance_automation->contract_subset_id,
+                        "authorized_date_id" => $performance_automation->authorized_date_id], [
+                        "authorized_date_id" => $performance_automation->authorized_date_id,
                         "role_id" => Auth::user()->role->id,
                         "user_id" => Auth::id(),
-                        "contract_subset_id" => $contract_subset->id,
-                        "attribute_id" => $contract_subset->invoice_attributes_id,
-                        "invoice_cover_title_id" => $contract_subset->invoice_cover_id,
+                        "contract_subset_id" => $performance_automation->contract_subset_id,
+                        "attribute_id" => $performance_automation->contract->invoice_attribute->id,
+                        "invoice_cover_title_id" => $performance_automation->contract->invoice_cover->id,
                         "role_priority" => 1
                     ]);
-                    foreach ($employees_data["performance_automation"]["performances"] as $item) {
+                    foreach ($employees_data["performances"] as $item) {
                         if (!isset($item["employee"]["invoice_data"]))
                             throw new \Exception("وضعیت " . $item["employee"]["first_name"] . " " . $item["employee"]["last_name"] . " دارای کد ملی " . $item["employee"]["national_code"] . " ارسال نشده است");
                         Invoice::query()->updateOrCreate(["invoice_automation_id" => $automation->id, "employee_id" => $item["employee"]["id"]], [
@@ -110,8 +110,8 @@ class InvoiceController extends Controller
                             "data" => json_encode($item["employee"]["invoice_data"], JSON_UNESCAPED_UNICODE)
                         ]);
                     }
-                    InvoiceCoverTitleData::query()->updateOrCreate(["invoice_automation_id" => $automation["id"]], [
-                        "invoice_automation_id" => $automation["id"],
+                    InvoiceCoverTitleData::query()->updateOrCreate(["invoice_automation_id" => $automation->id], [
+                        "invoice_automation_id" => $automation->id,
                         "data" => json_encode($invoice_cover_data, JSON_UNESCAPED_UNICODE)
                     ]);
                     if ($request->filled("comment"))
@@ -159,21 +159,23 @@ class InvoiceController extends Controller
         Gate::authorize('edit',"Invoices");
         try {
             $automation = InvoiceAutomation::query()->with([
-                "contract.invoice_automation.invoices.employee",
-                "contract.invoice_automation.attributes.items",
+                "invoices.employee",
+                "attributes.items" => function($query){
+                    $query->orderBy("table_attribute_items.category");
+                },
                 "contract.invoice_cover.items",
                 "cover",
                 "authorized_date","comments" => function($query){$query->where("user_id",Auth::id());}])
                 ->findOrFail($id);
             $employee_invoices = $automation->invoices->toArray();
-            $automation->contract->invoice_automation->invoices->map(function ($item) use ($employee_invoices) {
+            $automation->invoices->map(function ($item) use ($employee_invoices) {
                 $search_data = array_column($employee_invoices,"employee_id");
                 $index = array_search($item->employee->id,$search_data);
                 if (gettype($index) !== 'boolean') {
                     $item->employee["invoice_data"] = json_decode($employee_invoices[$index]["data"]);
                 }
             });
-            return view("staff.edit_invoice",["automation" => $automation,"contract_subset" => $automation->contract,"authorized_date" => $automation->authorized_date]);
+            return view("staff.edit_invoice",["automation" => $automation,"authorized_date" => $automation->authorized_date]);
         }
         catch (Throwable $error){
             return redirect()->back()->withErrors(["logical" => $error->getMessage()]);
@@ -191,7 +193,7 @@ class InvoiceController extends Controller
             if ($employees_data && $invoice_cover_data) {
                 DB::beginTransaction();
                 $automation = InvoiceAutomation::query()->findOrFail($id);
-                foreach ($employees_data["invoice_automation"]["invoices"] as $item) {
+                foreach ($employees_data["invoices"] as $item) {
                     if (!isset($item["employee"]["invoice_data"]))
                         throw new \Exception("وضعیت " . $item["employee"]["first_name"] . " " . $item["employee"]["last_name"] . " دارای کد ملی " . $item["employee"]["national_code"] . " ارسال نشده است");
                     Invoice::query()->updateOrCreate(["invoice_automation_id" => $automation->id, "employee_id" => $item["employee"]["id"]], [
@@ -237,10 +239,10 @@ class InvoiceController extends Controller
         }
     }
 
-    public function invoice_export_excel($id,$authorized_date_id = null,$invoice_automation_id = null): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\RedirectResponse
+    public function invoice_export_excel($id,$authorized_date_id = null,$automation_id = null): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\RedirectResponse
     {
         try {
-            return Excel::download(new NewInvoiceExport($id,$authorized_date_id,$invoice_automation_id), 'new_invoice.xlsx');
+            return Excel::download(new NewInvoiceExport($id,$authorized_date_id,$automation_id), 'new_invoice.xlsx');
         }
         catch (Throwable $error){
             return redirect()->back()->withErrors(["logical" => $error->getMessage()]);

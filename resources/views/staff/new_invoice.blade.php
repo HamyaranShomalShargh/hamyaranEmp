@@ -144,7 +144,8 @@
                             </label>
                             <s-file-browser :accept='["xlsx","xls"]' :size="500000"></s-file-browser>
                             <input type="hidden" value="{{ $automation->contract->id }}" id="contract_id">
-                            <input type="hidden" value="{{ $automation->id }}" id="performance_automation_id">
+                            <input type="hidden" value="{{ $automation->id }}" id="automation_id">
+                            <input type="hidden" value="new" id="type">
                             @error('upload_file')
                             <span class="invalid-feedback iranyekan small_font" role="alert">{{ $message }}</span>
                             @enderror
@@ -152,7 +153,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <axios-button :class="'btn btn-outline-primary'" :route="'{{ route("InvoicePreImport") }}'" :action="'load'" :required="['#upload_file','#performance_automation_id']" :elements="['#upload_file','#contract_id','#performance_automation_id']"  :message="'آیا برای بارگذاری فایل کارکرد اطمینان دارید؟'">
+                    <axios-button :class="'btn btn-outline-primary'" :route="'{{ route("InvoicePreImport") }}'" :action="'load'" :required="['#upload_file']" :elements="['#upload_file','#contract_id','#automation_id','#type']"  :message="'آیا برای بارگذاری فایل کارکرد اطمینان دارید؟'">
                         <i class="fa fa-database fa-1-2x mr-2"></i>
                         <span class="iranyekan">بارگذاری کارکرد</span>
                     </axios-button>

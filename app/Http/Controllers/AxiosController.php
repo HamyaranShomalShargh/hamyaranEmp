@@ -464,7 +464,7 @@ class AxiosController extends Controller
             $response = [];
             $import_errors = [];
             $id = $request->input("contract_id");
-            $import = new PreInvoiceImport($id, $request->input("performance_automation_id"),$request->filled("invoice_automation_id") ?: $request->input("invoice_automation_id"));
+            $import = new PreInvoiceImport($id, $request->input("automation_id"),$request->input("type"));
             $import->import($request->file("upload_file")->store("tmp"));
             if (count($import->failures()->toArray()) > 0){
                 foreach ($import->failures() as $failure){

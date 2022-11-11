@@ -16,7 +16,7 @@
         </script>
     @endif
     <script>
-        let table_data = @json($contract_subset);
+        let table_data = @json($automation);
         let cover_items = @json($automation->cover_titles->items);
     </script>
     @if($automation->cover->data)
@@ -46,7 +46,7 @@
             <div class="page-header">
                 <div class="input-group">
                     <div class="input-group-prepend" style="border-radius: 0">
-                        <a href="{{ route("InvoiceAutomation.Invoice_export_excel",[$contract_subset->id,$automation->id]) }}" class="btn btn-outline-info mr-2" style="border-radius: 0.25rem">
+                        <a href="{{ route("InvoiceAutomation.Invoice_export_excel",[$automation->contract->id,$automation->authorized_date_id,$automation->id]) }}" class="btn btn-outline-info mr-2" style="border-radius: 0.25rem">
                             <i class="fa fa-download fa-1-2x mr-1"></i>
                             <span class="iransans create-button">دانلود</span>
                         </a>
@@ -66,7 +66,7 @@
                     <div class="input-group-append">
                         <span class="input-group-text" id="basic-addon1"><i class="fa fa-table-cells fa-1-2x"></i></span>
                     </div>
-                    <input type="text" class="form-control iranyekan" readonly value="{{ "وضعیت ماهانه پرسنل ".$contract_subset->name."(".$contract_subset->workplace.") ".$contract_subset->invoice_automation->authorized_date["month_name"]." ماه سال ".$contract_subset->invoice_automation->authorized_date["automation_year"] }}">
+                    <input type="text" class="form-control iranyekan" readonly value="{{ "وضعیت ماهانه پرسنل ".$automation->contract->name."(".$automation->contract->workplace.") ".$automation->authorized_date->month_name." ماه سال ".$automation->authorized_date->automation_year }}">
                 </div>
             </div>
             <div class="page-header">
@@ -77,7 +77,7 @@
                             <input type="checkbox" v-on:change="change_table_height">
                         </span>
                     </div>
-                    <input type="text" class="form-control text-center iranyekan" placeholder="جستجو با نام و کد ملی" data-table="search_table" v-on:input="filter_table">
+                    <input type="text" class="form-control text-center iranyekan" placeholder="جستجو با نام و کد ملی" data-table="main-table" v-on:input="filter_table">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon1"><i class="fa fa-search fa-1-2x"></i></span>
                     </div>
@@ -85,23 +85,23 @@
             </div>
             <div style="overflow: hidden" class="p-3">
                 <div id="table-scroll" class="table-scroll low-height-table">
-                    <table id="main-table" class="main-table" v-cloak>
+                    <table id="main-table" class="main-table" v-cloak data-filter="[0,1]">
                         <thead class="bg-dark white-color">
                         <tr class="iransans">
                             <th scope="col"><span>نام</span></th>
                             <th scope="col"><span>کد ملی</span></th>
                             <th scope="col"><span>گروه شغلی</span></th>
-                            <th scope="col" v-for="attribute in table_data_records.invoice_automation.attributes.items"><span>@{{ attribute.name }}</span></th>
+                            <th scope="col" v-for="attribute in table_data_records.attributes.items"><span>@{{ attribute.name }}</span></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="item in table_data_records.invoice_automation.invoices">
+                        <tr v-for="item in table_data_records.invoices">
                             <td><span class="iranyekan">@{{ item.employee.first_name + " " + item.employee.last_name }}</span></td>
                             <td><span class="iranyekan">@{{ item.employee.national_code }}</span></td>
                             <td><span class="iranyekan">@{{ item.job_group }}</span></td>
-                            <td v-for="(attribute,index) in table_data_records.invoice_automation.attributes.items" :style="[attribute.category === 'function' ? {background:'#ffedc8'} : attribute.category === 'advantage' ? {background: '#dbffe5'} : attribute.category === 'deduction' ? {background: '#ffe5e5'} : {background: '#ffffff'}]">
-                                <input v-if="can_edit_values === true" class="form-control iranyekan text-center" :class="attribute['kind'] === 'number' ? thousand_separator : ''" :type="attribute['kind']" min="0" :value="get_employee_invoice_value(item.employee.id,index)" v-on:input="set_employee_invoice_value($event,item.employee.id,index)"/>
-                                <span v-else class="iranyekan text-center" v-text="Number(get_employee_invoice_value(item.employee.id,index).toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,'))"></span>
+                            <td v-for="(attribute,index) in table_data_records.attributes.items" :style="[attribute.category === 'function' ? {background:'#ffedc8'} : attribute.category === 'advantage' ? {background: '#dbffe5'} : attribute.category === 'deduction' ? {background: '#ffe5e5'} : {background: '#ffffff'}]">
+                                <input v-if="can_edit_values === true" class="form-control iranyekan text-center" :class="attribute['kind'] === 'number' ? 'thousand_separator' : ''" min="0" :value="get_employee_invoice_value(item.employee.id,index)" v-on:input="set_employee_invoice_value($event,item.employee.id,index)"/>
+                                <span v-else class="iranyekan text-center" v-text="get_employee_invoice_value(item.employee.id,index).toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,')"></span>
                             </td>
                         </tr>
                         </tbody>
@@ -237,9 +237,9 @@
                                 فایل اکسل کارکرد
                             </label>
                             <s-file-browser :accept='["xlsx","xls"]' :size="500000"></s-file-browser>
-                            <input type="hidden" value="{{ $contract_subset->id }}" id="contract_id">
-                            <input type="hidden" value="{{ $contract_subset->invoice_automation->id }}" id="performance_automation_id">
-                            <input type="hidden" value="{{ $automation->id }}" id="invoice_automation_id">
+                            <input type="hidden" value="{{ $automation->contract->id }}" id="contract_id">
+                            <input type="hidden" value="{{ $automation->id }}" id="automation_id">
+                            <input type="hidden" value="created" id="type">
                             @error('upload_file')
                             <span class="invalid-feedback iranyekan small_font" role="alert">{{ $message }}</span>
                             @enderror
@@ -247,7 +247,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <axios-button :class="'btn btn-outline-primary'" :route="'{{ route("InvoicePreImport") }}'" :action="'load'" :required="['#upload_file','#performance_automation_id','#invoice_automation_id']" :elements="['#upload_file','#contract_id','#performance_automation_id','invoice_automation_id']"  :message="'آیا برای بارگذاری فایل کارکرد اطمینان دارید؟'">
+                    <axios-button :class="'btn btn-outline-primary'" :route="'{{ route("InvoicePreImport") }}'" :action="'load'" :required="['#upload_file']" :elements="['#upload_file','#contract_id','#automation_id','#type']"  :message="'آیا برای بارگذاری فایل کارکرد اطمینان دارید؟'">
                         <i class="fa fa-database fa-1-2x mr-2"></i>
                         <span class="iranyekan">بارگذاری کارکرد</span>
                     </axios-button>

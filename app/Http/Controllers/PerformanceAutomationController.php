@@ -162,8 +162,11 @@ class PerformanceAutomationController extends Controller
     }
     public function performance_export_excel($id,$authorized_date_id = null): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\RedirectResponse
     {
-
-        return Excel::download(new NewPerformanceExport($id,$authorized_date_id,true), 'performance.xlsx');
-
+        try {
+            return Excel::download(new NewPerformanceExport($id, $authorized_date_id, true), 'performance.xlsx');
+        }
+        catch (Throwable $error){
+            return redirect()->back()->withErrors(["logical" => $error->getMessage()]);
+        }
     }
 }

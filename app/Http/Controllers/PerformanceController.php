@@ -35,7 +35,9 @@ class PerformanceController extends Controller
         Gate::authorize('create',"Performances");
         try {
             $request->validate(["contract_id" => "required"],["contract_id.required" => "انتخاب قرارداد الزامی می باشد"]);
-            $contract_subset = ContractSubset::query()->with(["contract","employees","performance_automation.performances.employee","performance_attribute.items"])->findOrFail($request->input("contract_id"));
+            $contract_subset = ContractSubset::query()->with(["contract","employees" => function($query){
+                $query->where("employees.unemployed","=",0);
+            },"performance_attribute.items"])->findOrFail($request->input("contract_id"));
             if (count($authorized_date = $contract_subset->entry_date_check()) == 0)
                 return redirect()->back()->withErrors(["result" => "مهلت ایجاد و ارسال اطلاعات کارکرد ".verta()->format("F")." ماه ".$contract_subset->workplace." به اتمام رسیده است"]);
             if ($performance_automation = $contract_subset->check_automation($authorized_date)) {
@@ -202,10 +204,11 @@ class PerformanceController extends Controller
 
     public function performance_export_excel($id,$authorized_date_id = null): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\RedirectResponse
     {
-
+        try {
             return Excel::download(new NewPerformanceExport($id,$authorized_date_id), 'new_performance.xlsx');
-
-            //return redirect()->back()->withErrors(["logical" => $error->getMessage()]);
-
+        }
+        catch (Throwable $error){
+            return redirect()->back()->withErrors(["logical" => $error->getMessage()]);
+        }
     }
 }

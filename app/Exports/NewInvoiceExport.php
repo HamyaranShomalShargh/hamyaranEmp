@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\ContractSubset;
+use App\Models\InvoiceAutomation;
 use App\Models\PerformanceAutomation;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Hash;
@@ -20,32 +21,33 @@ class NewInvoiceExport extends StringValueBinder implements FromView,WithStyles,
 {
     private int $contract_subset_id;
     private mixed $authorized_date_id;
-    private mixed $invoice_automation_id;
+    private mixed $automation_id;
     private mixed $automation;
     private string $type;
     private array $columns;
-    private array|null|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model $contract;
     private int $highest_column;
-    public function __construct($contract_subset_id,$authorized_date_id = null,$invoice_automation_id = null)
+    public function __construct($contract_subset_id,$authorized_date_id = null,$automation_id = null)
     {
         $this->contract_subset_id = $contract_subset_id;
         $this->authorized_date_id = $authorized_date_id;
-        $this->invoice_automation_id = $invoice_automation_id;
-        if ($this->invoice_automation_id) {
-            $this->automation = ContractSubset::query()->with(["contract",
-                "invoice_automation.authorized_date",
-                "invoice_automation.invoices.employee",
-                "invoice_attribute.items"])->whereHas("invoice_automation", function ($query) use ($invoice_automation_id) {
-                $query->where("invoice_automation.id", "=", $invoice_automation_id);
-            })->findOrFail($this->contract_subset_id);
-            $employee_invoices = $this->contract->invoice_automation->invoices->toArray();
-            $this->contract->invoice_automation->invoices->map(function ($item) use ($employee_invoices) {
+        $this->automation_id = $automation_id;
+        if ($this->automation_id) {
+            $this->automation = InvoiceAutomation::query()->with([
+                "invoices.employee",
+                "attributes.items" => function($query){
+                    $query->orderBy("table_attribute_items.category");
+                },
+                "contract.invoice_cover.items",
+                "cover",])->findOrFail($this->automation_id);
+            $employee_invoices = $this->automation->invoices->toArray();
+            $this->automation->invoices->map(function ($item) use ($employee_invoices) {
                 $search_data = array_column($employee_invoices,"employee_id");
                 $index = array_search($item->employee->id,$search_data);
                 if (gettype($index) !== 'boolean') {
                     $item->employee["invoice_data"] = json_decode($employee_invoices[$index]["data"]);
                 }
             });
+            $this->type = "created";
         }
         else {
             $this->automation = PerformanceAutomation::query()->with(["contract.invoice_attribute.items" => function($query){

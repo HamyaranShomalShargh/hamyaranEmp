@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpParser\Node\Stmt\TryCatch;
 use Throwable;
 
 class InvoiceAutomationController extends Controller
@@ -54,10 +55,12 @@ class InvoiceAutomationController extends Controller
                 $automation = InvoiceAutomation::query()->whereHas("signs", function ($query) {
                     $query->where("user_id", "=", Auth::id());
                 })->with([
-                    "contract.employees",
-                    "contract.invoice_automation.invoices.employee",
-                    "contract.invoice_automation.attributes.items",
-                    "invoices","authorized_date",
+                    "contract",
+                    "invoices.employee",
+                    "attributes.items" => function($query){
+                        $query->orderBy("table_attribute_items.category");
+                    },
+                    "authorized_date",
                     "cover_titles.items",
                     "cover",
                     "comments.user","signs.user"])->findOrFail($id);
@@ -65,17 +68,19 @@ class InvoiceAutomationController extends Controller
                 $automation = InvoiceAutomation::query()->whereHas("current_role", function ($query) {
                     $query->where("id", "=", Auth::user()->role->id);
                 })->with([
-                    "contract.employees",
-                    "contract.invoice_automation.invoices.employee",
-                    "contract.invoice_automation.attributes.items",
-                    "invoices","authorized_date",
+                    "contract",
+                    "invoices.employee",
+                    "attributes.items" => function($query){
+                        $query->orderBy("table_attribute_items.category");
+                    },
+                    "authorized_date",
                     "cover_titles.items",
                     "cover",
                     "comments.user","signs.user"])->findOrFail($id);
             $automation->update(["is_read" => 1]);
             $final_role = $automation->final_automation_role();
             $employee_invoices = $automation->invoices->toArray();
-            $automation->contract->invoice_automation->invoices->map(function ($item) use ($employee_invoices) {
+            $automation->invoices->map(function ($item) use ($employee_invoices) {
                 $search_data = array_column($employee_invoices, "employee_id");
                 $index = array_search($item->employee->id, $search_data);
                 if (gettype($index) !== 'boolean') {
@@ -85,8 +90,6 @@ class InvoiceAutomationController extends Controller
             return view("staff.invoice_details",
                 [
                     "automation" => $automation,
-                    "contract_subset" => $automation->contract,
-                    "authorized_date" => $automation->authorized_date,
                     "final_role" => $final_role,
                     "outbox" => $outbox != null
                 ]);
@@ -145,10 +148,14 @@ class InvoiceAutomationController extends Controller
             return redirect()->back()->withErrors(["logical" => $error->getMessage()]);
         }
     }
-    public function invoice_export_excel($id,$invoice_automation_id = null): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\RedirectResponse
+    public function invoice_export_excel($id,$authorized_date_id = null,$automation_id = null): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\RedirectResponse
     {
-        return Excel::download(new NewInvoiceExport($id,$invoice_automation_id), 'new_invoice.xlsx');
-
+        try {
+            return Excel::download(new NewInvoiceExport($id,$authorized_date_id,$automation_id), 'new_invoice.xlsx');
+        }
+        catch (Throwable $error){
+            return redirect()->back()->withErrors(["logical" => $error->getMessage()]);
+        }
     }
     public function print_cover($id): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
     {

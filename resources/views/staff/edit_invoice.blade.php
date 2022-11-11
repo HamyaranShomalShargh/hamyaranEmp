@@ -1,8 +1,8 @@
 @extends('layouts.staff_dashboard')
 @push('scripts')
     <script>
-        let table_data = @json($contract_subset);
-        let cover_items = @json($contract_subset->invoice_cover->items)
+        let table_data = @json($automation);
+        let cover_items = @json($automation->contract->invoice_cover->items)
     </script>
     @if($automation->cover->data)
         <script>
@@ -31,7 +31,7 @@
             <div class="page-header">
                 <div class="input-group">
                     <div class="input-group-prepend" style="border-radius: 0">
-                        <a href="{{ route("Invoices.invoice_export_excel",[$contract_subset->id,$automation->id]) }}" class="btn btn-outline-info mr-2" style="border-radius: 0.25rem">
+                        <a href="{{ route("Invoices.invoice_export_excel",[$automation->contract->id,$automation->authorized_date_id,$automation->id]) }}" class="btn btn-outline-info mr-2" style="border-radius: 0.25rem">
                             <i class="fa fa-download fa-1-2x mr-1"></i>
                             <span class="iransans create-button">دانلود</span>
                         </a>
@@ -47,7 +47,7 @@
                     <div class="input-group-append">
                         <span class="input-group-text" id="basic-addon1"><i class="fa fa-table-cells fa-1-2x"></i></span>
                     </div>
-                    <input type="text" class="form-control iranyekan" readonly value="{{ "وضعیت ماهانه پرسنل ".$contract_subset->name."(".$contract_subset->workplace.") ".$contract_subset->invoice_automation->authorized_date["month_name"]." ماه سال ".$contract_subset->invoice_automation->authorized_date["automation_year"] }}">
+                    <input type="text" class="form-control iranyekan" readonly value="{{ "وضعیت ماهانه پرسنل ".$automation->contract->name."(".$automation->contract->workplace.") ".$automation->authorized_date->month_name." ماه سال ".$automation->authorized_date->automation_year }}">
                 </div>
             </div>
             <div class="page-header">
@@ -66,15 +66,15 @@
                             <th scope="col"><span>نام</span></th>
                             <th scope="col"><span>کد ملی</span></th>
                             <th scope="col"><span>گروه شغلی</span></th>
-                            <th scope="col" v-for="attribute in table_data_records.invoice_automation.attributes.items"><span>@{{ attribute.name }}</span></th>
+                            <th scope="col" v-for="attribute in table_data_records.attributes.items"><span>@{{ attribute.name }}</span></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="item in table_data_records.invoice_automation.invoices">
+                        <tr v-for="item in table_data_records.invoices">
                             <td><span class="iranyekan">@{{ item.employee.first_name + " " + item.employee.last_name }}</span></td>
                             <td><span class="iranyekan">@{{ item.employee.national_code }}</span></td>
                             <td><span class="iranyekan">@{{ item.job_group }}</span></td>
-                            <td v-for="(attribute,index) in table_data_records.invoice_automation.attributes.items" style="min-width: 90px"><input class="form-control iranyekan text-center" :type="attribute['kind']" min="0" :value="get_employee_invoice_value(item.employee.id,index)" v-on:input="set_employee_invoice_value($event,item.employee.id,index)"/></td>
+                            <td v-for="(attribute,index) in table_data_records.attributes.items" style="min-width: 90px"><input class="form-control iranyekan text-center" :type="attribute['kind']" min="0" :value="get_employee_invoice_value(item.employee.id,index)" v-on:input="set_employee_invoice_value($event,item.employee.id,index)"/></td>
                         </tr>
                         </tbody>
                     </table>
@@ -98,7 +98,7 @@
                     <span class="iranyekan">ویرایش وضعیت</span>
                     <button id="submit_validated_form" type="submit" hidden form="main_submit_form"></button>
                 </button>
-                <a role="button" href="{{ route("ContractHeader.index") }}" class="btn btn-outline-secondary iranyekan" data-dismiss="modal">
+                <a role="button" href="{{ route("Invoices.index") }}" class="btn btn-outline-secondary iranyekan" data-dismiss="modal">
                     <i class="fa fa-arrow-turn-right fa-1-2x mr-1"></i>
                     <span class="iranyekan">بازگشت به لیست</span>
                 </a>
@@ -141,9 +141,9 @@
                                 فایل اکسل کارکرد
                             </label>
                             <s-file-browser :accept='["xlsx","xls"]' :size="500000"></s-file-browser>
-                            <input type="hidden" value="{{ $contract_subset->id }}" id="contract_id">
-                            <input type="hidden" value="{{ $contract_subset->performance_automation->id }}" id="performance_automation_id">
-                            <input type="hidden" value="{{ $automation->id }}" id="invoice_automation_id">
+                            <input type="hidden" value="{{ $automation->contract->id }}" id="contract_id">
+                            <input type="hidden" value="{{ $automation->id }}" id="automation_id">
+                            <input type="hidden" value="created" id="type">
                             @error('upload_file')
                             <span class="invalid-feedback iranyekan small_font" role="alert">{{ $message }}</span>
                             @enderror
@@ -151,7 +151,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <axios-button :class="'btn btn-outline-primary'" :route="'{{ route("InvoicePreImport") }}'" :action="'load'" :required="['#upload_file','#performance_automation_id','#invoice_automation_id']" :elements="['#upload_file','#contract_id','#performance_automation_id','invoice_automation_id']"  :message="'آیا برای بارگذاری فایل کارکرد اطمینان دارید؟'">
+                    <axios-button :class="'btn btn-outline-primary'" :route="'{{ route("InvoicePreImport") }}'" :action="'load'" :required="['#upload_file']" :elements="['#upload_file','#contract_id','#automation_id','#type']"  :message="'آیا برای بارگذاری فایل کارکرد اطمینان دارید؟'">
                         <i class="fa fa-database fa-1-2x mr-2"></i>
                         <span class="iranyekan">بارگذاری کارکرد</span>
                     </axios-button>

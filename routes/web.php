@@ -195,14 +195,14 @@ Route::group(['prefix'=>'Dashboard', 'middleware'=>['auth']],function() {
 
         Route::resource("/Invoices",InvoiceController::class);
         Route::post("/Invoices/Confirm/{id}",[InvoiceController::class,"confirm"])->name("Invoices.confirm");
-        Route::get("/Invoices/Excel/Export/{id}/{authorized_date_id?}",[InvoiceController::class,"invoice_export_excel"])->name("Invoices.invoice_export_excel");
+        Route::get("/Invoices/Excel/Export/{id}/{authorized_date_id?}/{automation_id?}",[InvoiceController::class,"invoice_export_excel"])->name("Invoices.invoice_export_excel");
 
         Route::group(['prefix' => 'InvoiceAutomation'],function (){
             Route::get("/Index",[InvoiceAutomationController::class,'index'])->name("InvoiceAutomation.index");
             Route::get("/Details/{id}/{outbox?}",[InvoiceAutomationController::class,'details'])->name("InvoiceAutomation.details");
             Route::put("/Agree/{id}",[InvoiceAutomationController::class,'agree'])->name("InvoiceAutomation.agree");
             Route::put("/DisAgree/{id}",[InvoiceAutomationController::class,'disagree'])->name("InvoiceAutomation.disagree");
-            Route::get("/Excel/Export/{id}/{automation_id?}",[InvoiceAutomationController::class,"invoice_export_excel"])->name("InvoiceAutomation.Invoice_export_excel");
+            Route::get("/Excel/Export/{id}/{authorized_date_id?}/{automation_id?}",[InvoiceAutomationController::class,"invoice_export_excel"])->name("InvoiceAutomation.Invoice_export_excel");
             Route::get("/PrintCover/{id}",[InvoiceAutomationController::class,"print_cover"])->name("InvoiceAutomation.print_cover");
         });
 
@@ -220,3 +220,7 @@ Route::group(['prefix'=>'Dashboard', 'middleware'=>['auth']],function() {
 
     });
 });
+//Route::get("/hash",function (){
+//    event(new NotificationEvent(Auth::id(),["message" => "کارکرد ماهانه","id" => 1, "type" => "performance", "action" => ""]));
+//    //dd(\Illuminate\Support\Facades\Hash::make("09105557068"));
+//});

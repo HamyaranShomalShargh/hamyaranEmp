@@ -6,7 +6,7 @@
         <th style="color: #ffffff;background-color: #343A40">کد ملی</th>
         <th style="color: #ffffff;background-color: #343A40">گروه شغلی</th>
         @if($type == "created")
-            @forelse($contract->invoice_automation->attributes->items as $attribute)
+            @forelse($automation->attributes->items as $attribute)
                 <th style="color: #ffffff;background-color: #343A40">{{ $attribute->name }}</th>
             @empty
             @endforelse
@@ -20,13 +20,13 @@
     </thead>
     <tbody>
     @if($type == "created")
-        @forelse($contract->invoice_automation->invoices as $invoice)
+        @forelse($automation->invoices as $invoice)
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $invoice->employee->first_name." ".$invoice->employee->last_name }}</td>
                 <td>{{ $invoice->employee->national_code }}</td>
                 <td>{{ $invoice->job_group }}</td>
-                @forelse($contract->invoice_automation->attributes->items as $attribute)
+                @forelse($automation->attributes->items as $attribute)
                     <td>{{ $invoice->employee["invoice_data"][$loop->index] }}</td>
                 @empty
                 @endforelse
