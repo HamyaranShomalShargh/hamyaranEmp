@@ -230,6 +230,13 @@
                         @enderror
                     </div>
                     <div class="form-group col-12 col-lg-4 col-xl-3">
+                        <label class="form-lbl iranyekan">سقف اضافه کار مجاز</label>
+                        <input class="form-control iranyekan text-center @error('extra_work_limit') is-invalid @enderror number_masked" type="text" data-mask="000" name="extra_work_limit" value="{{ $employee->extra_work_limit }}">
+                        @error('extra_work_limit')
+                        <span class="invalid-feedback iranyekan small_font" role="alert">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group col-12 col-lg-4 col-xl-3">
                         <label class="form-lbl iranyekan">موبایل</label>
                         <input class="form-control iranyekan text-center @error('mobile') is-invalid @enderror number_masked" type="text" data-mask="00000000000" name="mobile" value="{{ $employee->mobile }}">
                         @error('mobile')

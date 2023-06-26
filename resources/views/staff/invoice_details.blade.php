@@ -51,7 +51,7 @@
                             <span class="iransans create-button">دانلود</span>
                         </a>
                         @can("edit_values","InvoiceAutomation")
-                            @if($automation->is_finished == "0" && !$outbox)
+                            @if($automation->is_finished == 0 && !$outbox)
                                 <button class="btn btn-outline-primary mr-2" data-toggle="modal" data-target="#upload_performance_excel_modal" style="border-radius: 0.25rem">
                                     <i class="fa fa-upload fa-1-2x mr-1"></i>
                                     <span class="iransans create-button">بارگذاری</span>

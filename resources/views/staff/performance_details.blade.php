@@ -179,13 +179,14 @@
             @endif
             <div class="w-100 form-button-row text-center pt-4 pb-4 position-sticky" style="z-index: 1000;bottom: 0">
                 @if($automation->is_finished == 0 && !$outbox)
-                    <button type="submit" form="main_submit_form" class="btn btn-success submit_button">
+                    <button class="btn btn-success submit_button" data-method="edit" v-on:click="performance_validation">
                         <i class="submit_button_icon fa fa-check fa-1-2x mr-2"></i>
                         @if(auth()->user()->role->id == $final_role)
                             <span class="iranyekan">ذخیره، تایید و خاتمه</span>
                         @else
                             <span class="iranyekan">ذخیره، تایید و ارسال</span>
                         @endif
+                        <button id="submit_validated_form" hidden type="submit" form="main_submit_form"></button>
                     </button>
                     <form class="d-inline" id="refer_form" action="{{ route("PerformanceAutomation.disagree",$automation->id) }}" method="post" v-on:submit="submit_form">
                         @csrf

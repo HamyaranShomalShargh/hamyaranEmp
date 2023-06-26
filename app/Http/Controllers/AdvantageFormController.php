@@ -24,7 +24,7 @@ class AdvantageFormController extends Controller
             $automations = AdvantageAutomation::query()->with(["employee","current_role","user"])
                 ->whereHas("user",function ($query){$query->where("id","=",Auth::id());})->orderBy("id","desc")->get();
             $advantages = Advantage::query()->with("attachments")->where("inactive","=",0)->get();
-            $employees = Employee::query()->with("contract")->where("unemployed","=",0)->get();
+            $employees = Employee::permitted_employees();
             return view("staff.advantage_forms",["advantages" => $advantages,"employees" => $employees,"automations" => $automations]);
         }
         catch (Throwable $error){

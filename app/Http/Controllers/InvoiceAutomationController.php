@@ -27,7 +27,7 @@ class InvoiceAutomationController extends Controller
                         $query->where("id", "=", Auth::user()->role->id);
                     })->whereHas("contract", function ($query) use ($contracts) {
                         $query->whereIn("contract_subset_id", $contracts->pluck("id"));
-                    })->where("is_finished","=",0)->orderBy("id", "desc")->get();
+                    })->where("is_finished","=",0)->where("is_committed","=",1)->orderBy("id", "desc")->get();
                 $invoice_automation_outbox = InvoiceAutomation::query()->with(["authorized_date", "current_role", "contract","user","invoices"])
                     ->whereHas("signs", function ($query) {
                         $query->where("user_id", "=", Auth::id());

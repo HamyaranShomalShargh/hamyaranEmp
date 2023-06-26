@@ -649,52 +649,76 @@ const app = new Vue({
         },
         performance_validation(e){
             const self = this;
-            let extra_work_error = [];
+            let extra_work_sum = 0;
+            let self_extra_work = [];
+            let overtime_limitation = 0;
             let work_day_error = [];
+            let tbody = $("#main-table").find("tbody")[0];
             switch (e.currentTarget.dataset.method){
                 case "new":{
                     this.table_data_records.employees.forEach((item,index) => {
                         if (typeof item["performance_data"] !== "undefined"){
-                            if(item["performance_data"][1] > self.table_data_records.overtime_registration_limit)
-                                extra_work_error.push(index);
+                            extra_work_sum += Number(item["performance_data"][1]);
+                            if (Number(item["performance_data"][1]) > Number(item["extra_work_limit"]))
+                                self_extra_work.push(index);
                             if(item["performance_data"][0] + item["performance_data"][10] + item["performance_data"][11] + item["performance_data"][12] === 0)
                                 work_day_error.push(index);
                         }
                         else
                             work_day_error.push(index);
                     });
+                    overtime_limitation = Number(this.table_data_records.overtime_registration_limit) * Number(this.table_data_records.employees.length);
                     break;
                 }
                 case "edit":{
                     this.table_data_records.performances.forEach((item,index) => {
                         if (typeof item.employee["performance_data"] !== "undefined"){
-                            if(item.employee["performance_data"][1] > self.table_data_records.overtime_registration_limit)
-                                extra_work_error.push(index);
+                            extra_work_sum += Number(item.employee["performance_data"][1]);
+                            if (Number(item.employee["performance_data"][1]) > Number(item.employee["extra_work_limit"]))
+                                self_extra_work.push(index);
                             if(item.employee["performance_data"][0] + item.employee["performance_data"][10] + item.employee["performance_data"][11] + item.employee["performance_data"][12] === 0)
                                 work_day_error.push(index);
                         }
                         else
                             work_day_error.push(index);
                     });
+                    overtime_limitation = Number(this.table_data_records.contract.overtime_registration_limit) * Number(this.table_data_records.performances.length);
                     break;
                 }
             }
-            if (extra_work_error.length > 0 || work_day_error.length > 0){
-                let tbody = $("#main-table").find("tbody")[0];
-                if (work_day_error.length > 0) {
+            if (work_day_error.length > 0){
                     work_day_error.forEach((item) => {
                         tbody.rows[item].cells[2].children[0].classList.add("is-invalid");
                         tbody.rows[item].cells[2].children[0].setAttribute("title","مقادیر کارکرد و انواع مرخصی ها نمی تواند به طور همزمان صفر باشد");
                     });
-                }
-                if (extra_work_error.length > 0) {
-                    extra_work_error.forEach((item) => {
-                        tbody.rows[item].cells[3].children[0].classList.add("is-invalid");
-                        tbody.rows[item].cells[3].children[0].setAttribute("title","میزان وارد شده از سقف مجاز مرخصی بیشتر است");
-                    });
-                }
                 bootbox.alert({
-                    "message": "لطفا مقادیر مشخص شده در جدول را اصلاح نمایید",
+                    "message": "پرسنل مشخص شده دارای کارکرد و یا انواع مرخصی نمی باشند",
+                    closeButton: false,
+                    buttons: {
+                        ok: {
+                            label: 'قبول'
+                        }
+                    }
+                });
+            }
+            else if (self_extra_work.length > 0){
+                self_extra_work.forEach((item) => {
+                        tbody.rows[item].cells[3].children[0].classList.add("is-invalid");
+                        tbody.rows[item].cells[3].children[0].setAttribute("title","با توجه به سقف مجاز اضافه کار به ازای هر نفر، مقدار وارد شده بیش از آن می باشد");
+                    });
+                bootbox.alert({
+                    "message": "پرسنل مشخص شده دارای اضافه کار بیش از حد مجاز به ازای هر نفر می باشند",
+                    closeButton: false,
+                    buttons: {
+                        ok: {
+                            label: 'قبول'
+                        }
+                    }
+                });
+            }
+            else if (extra_work_sum > overtime_limitation){
+                bootbox.alert({
+                    "message": "مجموع اضافه کاری ثبت شده بیشتر از حد مجاز " + overtime_limitation + " ساعت می باشد",
                     closeButton: false,
                     buttons: {
                         ok: {

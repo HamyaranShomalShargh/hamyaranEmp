@@ -22,7 +22,7 @@
                     <div class="input-group-prepend">
                         <button class="btn btn-outline-info mr-2" data-toggle="modal" data-target="#new_performance_modal">
                             <i class="fa fa-plus-circle fa-1-2x mr-1"></i>
-                            <span class="iransans create-button">وضعیت جدید</span>
+                            <span class="iransans create-button">فرم جدید</span>
                         </button>
                     </div>
                     <input type="text" class="form-control text-center iranyekan" placeholder="جستجو با قرارداد ، سال و ماه" data-table="search_table" v-on:input="filter_table">

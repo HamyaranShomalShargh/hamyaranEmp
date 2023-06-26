@@ -94,7 +94,9 @@ class PrePerformanceImport implements ToArray,WithValidation,SkipsOnFailure,With
             $this->result = $automation->toArray();
         }
         else {
-            $contract_subset = ContractSubset::query()->with(["employees", "contract","performance_attribute.items"])->findOrFail($this->contract_subset_id);
+            $contract_subset = ContractSubset::query()->with(["employees" => function ($query){
+                $query->where("employees.unemployed","=",0);
+            }, "contract","performance_attribute.items"])->findOrFail($this->contract_subset_id);
             $contract_subset->employees->map(function ($employee) use ($array) {
                 $search_data = array_column($array, 2);
                 $index = array_search($employee->national_code, $search_data);

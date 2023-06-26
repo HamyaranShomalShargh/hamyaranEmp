@@ -42,6 +42,7 @@ class EmployeeRequest extends FormRequest
             "phone" => "sometimes|nullable",
             "mobile" => "sometimes|nullable",
             "address" => "sometimes|nullable",
+            "extra_work_limit" => "required"
         ];
     }
 
@@ -60,6 +61,7 @@ class EmployeeRequest extends FormRequest
             "worker_credit.required" => "درج صفر و یا بن ماهیانه الزامی می باشد",
             "housing_credit.required" => "درج صفر و یا کمک هزینه مسکن الزامی می باشد",
             "job_group.required" => "درج صفر و یا گروه شغلی الزامی می باشد",
+            "extra_work_limit" => "درج سقف مجاز اضافه کار الزامی می باشد"
         ];
     }
 }

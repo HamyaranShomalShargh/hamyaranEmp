@@ -8,7 +8,7 @@
     <title>داشبورد</title>
     <link href="{{ asset('css/app.css?v=').$company_information->app_version }}" rel="stylesheet">
     @stack('styles')
-    <script src="{{ asset('/js/app.js?v=').$company_information->app_version }}" defer></script>
+    <script src="{{ asset('/js/app.js?v=').$company_information->app_version.time() }}" defer></script>
 {{--    <script src="{{ asset('/js/enable_push.js?v='.time()) }}" defer></script>--}}
     <script>
         window.Laravel = {!! json_encode([

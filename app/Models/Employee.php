@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Employee extends Model
 {
     protected $table = "employees";
-    protected $fillable = ["contract_subset_id","first_name","last_name","gender","national_code","id_number","birth_date","birth_city","education","marital_status","children_number","insurance_number","insurance_days","military_status","basic_salary","daily_wage","worker_credit","housing_credit","child_credit","job_group","bank_name","bank_account","credit_card","sheba_number","phone","mobile","address","unemployed","user_id"];
+    protected $fillable = ["extra_work_limit","contract_subset_id","first_name","last_name","gender","national_code","id_number","birth_date","birth_city","education","marital_status","children_number","insurance_number","insurance_days","military_status","basic_salary","daily_wage","worker_credit","housing_credit","child_credit","job_group","bank_name","bank_account","credit_card","sheba_number","phone","mobile","address","unemployed","user_id"];
     protected $appends = ['edit_url'];
     use HasFactory;use softDeletes;
 
@@ -43,5 +44,14 @@ class Employee extends Model
     public function getEditUrlAttribute(): string
     {
         return route("Employees.edit",$this->id);
+    }
+    public static function permitted_employees(): \Illuminate\Database\Eloquent\Collection|array
+    {
+        $permitted_contracts = Auth::user()->contracts()->pluck("contract_subsets.id");
+        if ($permitted_contracts){
+            return self::query()->with("contract")->where("unemployed","=",0)->whereIn("contract_subset_id",$permitted_contracts)->get();
+        }
+        else
+            return [];
     }
 }

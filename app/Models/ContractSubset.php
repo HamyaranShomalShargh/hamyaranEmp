@@ -90,4 +90,10 @@ class ContractSubset extends Model
             $query->where("automation_authorized_date.id","=",$date["id"]);
         })->first();
     }
+    public function check_invoice_automation($year,$month): Model|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\HasMany|null
+    {
+        return $this->invoice_automation()->whereHas("authorized_date",function ($query) use ($year,$month){
+            $query->where("automation_authorized_date.automation_year","=",$year)->where("automation_authorized_date.automation_month","=",$month);
+        })->first();
+    }
 }

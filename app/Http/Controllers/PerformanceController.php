@@ -47,6 +47,9 @@ class PerformanceController extends Controller
                     return redirect()->back()->withErrors(["result" => "کارکرد " . verta()->format("F") . " ماه " . $contract_subset->workplace . " ایجاد شده است.لطفا پس از یافتن رکورد متناظر از طریق جدول، در منوی عملیات اقدام به ویرایش آن نمایید"]);
 
             }
+            $contract_subset->employees->map(function ($item) {
+                $item["performance_data"] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+            });
             return view("staff.new_performance",["contract_subset" => $contract_subset,"authorized_date" => $authorized_date]);
         }
         catch (Throwable $error){

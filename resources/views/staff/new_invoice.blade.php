@@ -97,7 +97,7 @@
                         <button id="submit_validated_form" type="submit" hidden form="main_submit_form"></button>
                     </button>
                 @endcan
-                <a role="button" href="{{ route("ContractHeader.index") }}" class="btn btn-outline-secondary iranyekan" data-dismiss="modal">
+                <a role="button" href="{{ route("Invoices.index") }}" class="btn btn-outline-secondary iranyekan" data-dismiss="modal">
                     <i class="fa fa-arrow-turn-right fa-1-2x mr-1"></i>
                     <span class="iranyekan">بازگشت به لیست</span>
                 </a>

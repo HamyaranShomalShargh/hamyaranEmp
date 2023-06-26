@@ -36,7 +36,7 @@ class InvoiceController extends Controller
     public function create(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
     {
         Gate::authorize('create',"Invoices");
-        try {
+
             $request->validate(["contract_id" => "required","year" => "required","month" => "required"],
                 [
                     "contract_id.required" => "انتخاب قرارداد الزامی می باشد",
@@ -60,8 +60,8 @@ class InvoiceController extends Controller
                         "performance_automation.authorized_date",
                         "performance_automation.performances.employee",
                         "invoice_attribute.items"])->findOrFail($request->input("contract_id"));
-                    if ($contract_subset->invoice_automation()->exists()) {
-                        if ($contract_subset->invoice_automation->is_committed == 1)
+                    if ($invoice_automation = $contract_subset->check_invoice_automation($request->input("year"),$request->input("month"))) {
+                        if ($invoice_automation->is_committed == 1)
                             return redirect()->back()->withErrors(["result" => "وضعیت " . verta()->format("F") . " ماه " . $contract_subset->workplace . " تایید و ارسال نهایی شده است. جهت ویرایش و یا حذف، نیاز به ارجاع آن می باشد"]);
                         else
                             return redirect()->back()->withErrors(["result" => "وضعیت " . verta()->format("F") . " ماه " . $contract_subset->workplace . " ایجاد شده است.لطفا پس از یافتن رکورد متناظر از طریق جدول، در منوی عملیات اقدام به ویرایش آن نمایید"]);
@@ -71,10 +71,7 @@ class InvoiceController extends Controller
 
                 }
             }
-        }
-        catch (Throwable $error){
-            return redirect()->back()->withErrors(["logical" => $error->getMessage()]);
-        }
+
     }
 
     public function store(Request $request): \Illuminate\Http\RedirectResponse

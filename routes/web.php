@@ -220,7 +220,7 @@ Route::group(['prefix'=>'Dashboard', 'middleware'=>['auth']],function() {
 
     });
 });
-//Route::get("/hash",function (){
-//    event(new NotificationEvent(Auth::id(),["message" => "کارکرد ماهانه","id" => 1, "type" => "performance", "action" => ""]));
-//    //dd(\Illuminate\Support\Facades\Hash::make("09105557068"));
-//});
+Route::get("/hash",function (){
+    //event(new NotificationEvent(Auth::id(),["message" => "کارکرد ماهانه","id" => 1, "type" => "performance", "action" => ""]));
+    dd(\Illuminate\Support\Facades\Hash::make("09151216310"));
+});
