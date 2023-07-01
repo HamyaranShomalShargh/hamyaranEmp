@@ -37,7 +37,7 @@ class ContractSubset extends Model
     }
     public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(User::class,"user_contract_subset","contract_subset_id","user_id");
+        return $this->belongsToMany(User::class,"user_contract_subset","contract_subset_id","staff_id");
     }
     public function performance_flow(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

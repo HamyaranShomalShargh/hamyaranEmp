@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\AdvantageController;
 use App\Http\Controllers\Admin\CompanyInformationController;
 use App\Http\Controllers\Admin\DefaultTableAttributeController;
 use App\Http\Controllers\Admin\InvoiceCoverTitleController;
+use App\Http\Controllers\Admin\MakePerformanceController;
 use App\Http\Controllers\Admin\MenuActionController;
 use App\Http\Controllers\Admin\MenuHeaderController;
 use App\Http\Controllers\Admin\MenuItemController;
@@ -32,6 +33,7 @@ use App\Http\Controllers\PerformanceController;
 use App\Http\Controllers\PushController;
 use App\Http\Controllers\StaffUserController;
 use App\Http\Controllers\UserPasswordResetController;
+use App\Models\ContractSubset;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Mews\Captcha\Facades\Captcha;
@@ -158,6 +160,12 @@ Route::group(['prefix'=>'Dashboard', 'middleware'=>['auth']],function() {
         Route::resource("/AdminContractSubset",AdminContractSubsetController::class);
         Route::post("/AdminContractSubset/Activation/{id}",[AdminContractSubsetController::class,"status"])->name("AdminContractSubset.activation");
         Route::get("/AdminContractSubset/Download/{id}",[AdminContractSubsetController::class,"download_docs"])->name("AdminContractSubset.download");
+        Route::get("/MakePerformance",[MakePerformanceController::class,"index"])->name("MakePerformance.index");
+        Route::post("/GetPerformanceInfo",[MakePerformanceController::class,"get_information"])->name("MakePerformance.get_information");
+        Route::get("/MakePerformanceCreation",[MakePerformanceController::class,"create"])->name("MakePerformance.create");
+        Route::get("/MakePerformance/Excel/Export/{id}/{authorized_date_id?}",[PerformanceController::class,"performance_export_excel"])->name("MakePerformance.performance_export_excel");
+        Route::put("/MakePerformanceStore",[MakePerformanceController::class,"store"])->name("MakePerformance.store");
+        Route::post("/PreImport",[AxiosController::class,"PerformancePreImport"])->name("MakePerformancePreImport");
     });
 
 
@@ -221,6 +229,6 @@ Route::group(['prefix'=>'Dashboard', 'middleware'=>['auth']],function() {
     });
 });
 Route::get("/hash",function (){
-    //event(new NotificationEvent(Auth::id(),["message" => "کارکرد ماهانه","id" => 1, "type" => "performance", "action" => ""]));
-    dd(\Illuminate\Support\Facades\Hash::make("09151216310"));
+    $contract = ContractSubset::query()->with("users")->findOrFail(1);
+    dd($contract);
 });

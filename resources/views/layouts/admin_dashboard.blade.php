@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>داشبورد</title>
-    <script src="{{ asset('js/app.js?v=').$company_information->app_version }}" defer></script>
+
     @stack('styles')
     <link href="{{ asset('css/app.css?v=').$company_information->app_version }}" rel="stylesheet">
     <script>
@@ -14,7 +14,7 @@
         'user' => auth()->check() ? auth()->user()->id : null,
     ]) !!};
     </script>
-    @stack('scripts')
+    @yield('variables')
 </head>
 <body class="dashboard-container">
 <div id="app">
@@ -114,6 +114,12 @@
                             <a role="button" href="{{route("AutomationFlow.index")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-around">
                                 <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/data-flow.png")}}" alt="menu">
                                 <span class="iranyekan ribbon-item-text">جریان گردش اتوماسیون</span>
+                            </a>
+                        </li>
+                        <li class="position-relative ribbon-li">
+                            <a role="button" href="{{route("MakePerformance.index")}}" class="ribbon-item btn btn-light d-flex flex-column align-items-center justify-content-around">
+                                <img class="ribbon-item-icon" src="{{asset("/images/static_menu_icons/list.png")}}" alt="menu">
+                                <span class="iranyekan ribbon-item-text">ثبت کارکرد</span>
                             </a>
                         </li>
                     </ul>
@@ -296,5 +302,7 @@
     </footer>
     @yield('modals')
 </div>
+<script src="{{ asset('js/app.js?v=').$company_information->app_version }}"></script>
+@stack('scripts')
 </body>
 </html>

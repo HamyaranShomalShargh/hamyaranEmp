@@ -54,6 +54,9 @@ const app = new Vue({
         invoice_cover_items: typeof cover_items !== "undefined" ? cover_items : [],
         advantage_list: typeof advantage_data !== "undefined" ? advantage_data : [],
         report_json_data: typeof report_data !== "undefined" ? report_data : [],
+        contract_id: null,
+        year: null,
+        month: null
     },
     components: {
         data_table: DataTable,
@@ -1048,6 +1051,6 @@ const app = new Vue({
                         </div>`)
                 })
             }
-        }
+        },
     }
 });
